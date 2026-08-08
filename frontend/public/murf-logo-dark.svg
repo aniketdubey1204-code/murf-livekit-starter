@@ -1,0 +1,24 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Store/Shop icon for Dukaan Saathi (dark mode) -->
+  <!-- Roof/Awning -->
+  <path d="M4 12L6 6H26L28 12H4Z" fill="#D2A679" stroke="#D2A679" stroke-width="0.5" stroke-linejoin="round"/>
+  <!-- Awning scallops -->
+  <path d="M4 12C4 12 6 15 8.5 12C11 15 13.5 12C16 15 18.5 12C21 15 23.5 12C26 15 28 12" stroke="#F4A940" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Store body -->
+  <rect x="6" y="12" width="20" height="14" rx="1" fill="#2D1F0E" stroke="#D2A679" stroke-width="1"/>
+  <!-- Door -->
+  <rect x="13" y="18" width="6" height="8" rx="0.5" fill="#F4A940" stroke="#D2A679" stroke-width="0.5"/>
+  <!-- Door handle -->
+  <circle cx="17.5" cy="22" r="0.6" fill="#2D1F0E"/>
+  <!-- Left window -->
+  <rect x="8" y="15" width="4" height="4" rx="0.5" fill="#3E2723" stroke="#D2A679" stroke-width="0.5"/>
+  <line x1="10" y1="15" x2="10" y2="19" stroke="#D2A679" stroke-width="0.3"/>
+  <line x1="8" y1="17" x2="12" y2="17" stroke="#D2A679" stroke-width="0.3"/>
+  <!-- Right window -->
+  <rect x="20" y="15" width="4" height="4" rx="0.5" fill="#3E2723" stroke="#D2A679" stroke-width="0.5"/>
+  <line x1="22" y1="15" x2="22" y2="19" stroke="#D2A679" stroke-width="0.3"/>
+  <line x1="20" y1="17" x2="24" y2="17" stroke="#D2A679" stroke-width="0.3"/>
+  <!-- Sign board -->
+  <rect x="10" y="3" width="12" height="4" rx="1" fill="#F4A940"/>
+  <text x="16" y="6" text-anchor="middle" font-size="3" font-weight="bold" fill="#1A1208" font-family="sans-serif">DS</text>
+</svg>

@@ -44,7 +44,17 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           key="welcome"
           {...VIEW_MOTION_PROPS}
           startButtonText={appConfig.startButtonText}
-          onStartCall={start}
+          onStartCall={async () => {
+            try {
+              await start();
+            } catch (err: any) {
+              // Dispatch custom error event if microphone permission fails
+              if (err?.message?.includes('Permission denied') || err?.message?.includes('NotAllowedError') || err?.name === 'NotAllowedError') {
+                window.dispatchEvent(new ErrorEvent('error', { error: err, message: 'Permission denied: microphone' }));
+              }
+              console.error('Failed to start session:', err);
+            }
+          }}
         />
       )}
       {/* Session view */}
@@ -56,19 +66,6 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           supportsVideoInput={appConfig.supportsVideoInput}
           supportsScreenShare={appConfig.supportsScreenShare}
           isPreConnectBufferEnabled={appConfig.isPreConnectBufferEnabled}
-          audioVisualizerType={appConfig.audioVisualizerType}
-          audioVisualizerColor={
-            resolvedTheme === 'dark'
-              ? appConfig.audioVisualizerColorDark
-              : appConfig.audioVisualizerColor
-          }
-          audioVisualizerColorShift={appConfig.audioVisualizerColorShift}
-          audioVisualizerBarCount={appConfig.audioVisualizerBarCount}
-          audioVisualizerGridRowCount={appConfig.audioVisualizerGridRowCount}
-          audioVisualizerGridColumnCount={appConfig.audioVisualizerGridColumnCount}
-          audioVisualizerRadialBarCount={appConfig.audioVisualizerRadialBarCount}
-          audioVisualizerRadialRadius={appConfig.audioVisualizerRadialRadius}
-          audioVisualizerWaveLineWidth={appConfig.audioVisualizerWaveLineWidth}
           className="fixed inset-0"
         />
       )}

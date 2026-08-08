@@ -4,6 +4,7 @@ import { type ComponentProps } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { type AgentState, type ReceivedMessage } from '@livekit/components-react';
 import { AgentChatIndicator } from '@/components/agents-ui/agent-chat-indicator';
+import { transliterateHindiToHinglish } from '@/lib/transliterate';
 import {
   Conversation,
   ConversationContent,
@@ -61,10 +62,14 @@ export function AgentChatTranscript({
           const time = new Date(timestamp);
           const title = time.toLocaleTimeString(locale, { timeStyle: 'full' });
 
+          const finalMessage = transliterateHindiToHinglish(message);
+
           return (
             <Message key={id} title={title} from={messageOrigin}>
               <MessageContent>
-                <MessageResponse>{message}</MessageResponse>
+                <MessageResponse className="font-medium font-[family-name:var(--font-nunito)] text-base md:text-xl leading-relaxed text-slate-800 dark:text-slate-100 tracking-wide">
+                  {finalMessage}
+                </MessageResponse>
               </MessageContent>
             </Message>
           );
