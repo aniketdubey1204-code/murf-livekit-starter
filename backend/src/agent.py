@@ -1,3 +1,5 @@
+import asyncio
+import json
 import logging
 import os
 
@@ -9,14 +11,15 @@ from livekit.agents import (
     AgentSession,
     JobContext,
     JobProcess,
+    RunContext,
     cli,
-    inference,
+    function_tool,
     tokenize,
     room_io,
     UserInputTranscribedEvent,
 )
+from livekit.agents.inference import TurnDetector
 from livekit.plugins import murf, silero, openai, deepgram, noise_cancellation
-from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 logger = logging.getLogger("agent")
 
@@ -27,27 +30,71 @@ try:
 except ImportError:
     from src.prompt import SYSTEM_PROMPT
 
+try:
+    from db import init_db, lookup_caller, save_caller
+except ImportError:
+    from src.db import init_db, lookup_caller, save_caller
+
+# Default greeting for new callers (Hinglish - safe ASCII)
+DEFAULT_GREETING = (
+    "Namaste! Main Dukaan Sathi hoon, aapki local dukaan ki digital sahayika. "
+    "Bataiye, aaj aapko kya saman chahiye ya store ke baare mein kya jaankari chahiye?"
+)
+
 
 class Assistant(Agent):
-    def __init__(self) -> None:
-        super().__init__(instructions=SYSTEM_PROMPT)
+    def __init__(self, caller_context: str = "") -> None:
+        # Inject caller context into the system prompt so the agent knows
+        # whether this is a new or returning caller right from the start.
+        full_prompt = SYSTEM_PROMPT
+        if caller_context:
+            full_prompt += f"\n\nCALLER CONTEXT:\n{caller_context}"
+        super().__init__(instructions=full_prompt)
 
-    # To add tools, use the @function_tool decorator.
-    # Here's an example that adds a simple weather tool.
-    # You also have to add `from livekit.agents import function_tool, RunContext` to the top of this file
-    # @function_tool
-    # async def lookup_weather(self, context: RunContext, location: str):
-    #     """Use this tool to look up current weather information in the given location.
-    #
-    #     If the location is not supported by the weather service, the tool will indicate this. You must tell the user the location's weather is unavailable.
-    #
-    #     Args:
-    #         location: The location to look up weather information for (e.g. city name)
-    #     """
-    #
-    #     logger.info(f"Looking up weather for {location}")
-    #
-    #     return "sunny with a temperature of 70 degrees."
+    @function_tool
+    async def lookup_caller_tool(self, context: RunContext, user_id: str):
+        """Look up a caller in the database to check if they are a returning customer.
+
+        Args:
+            user_id: The unique identifier of the caller (participant identity or phone number).
+        """
+        logger.info(f"Tool call: looking up caller {user_id}")
+        result = await lookup_caller(user_id)
+        if result is None:
+            return "No record found. This is a new caller."
+        return json.dumps(result, ensure_ascii=False)
+
+    @function_tool
+    async def save_caller_info(
+        self,
+        context: RunContext,
+        user_id: str,
+        name: str,
+        language_preference: str,
+        facts: str,
+    ):
+        """Save caller information to the database. IMPORTANT: Only call this
+        AFTER the caller has given explicit verbal consent to save their data.
+
+        Args:
+            user_id: The unique identifier of the caller.
+            name: The caller's name.
+            language_preference: Preferred language - hi, en, or hinglish.
+            facts: A JSON string of facts to remember, e.g. {"past_orders": "5 kg aata, 2 kg cheeni", "area": "Sector 4", "preferred_delivery_slot": "morning"}.
+        """
+        logger.info(f"Tool call: saving caller info for {name} ({user_id})")
+        try:
+            facts_dict = json.loads(facts) if isinstance(facts, str) else facts
+        except json.JSONDecodeError:
+            facts_dict = {"notes": facts}
+
+        result = await save_caller(
+            user_id=user_id,
+            name=name,
+            language_pref=language_preference,
+            facts=facts_dict,
+        )
+        return f"Caller profile saved successfully for {name}."
 
 
 server = AgentServer()
@@ -55,6 +102,11 @@ server = AgentServer()
 
 def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
+    # Initialize the caller database at startup.
+    # Use asyncio.run() because prewarm runs in a background thread
+    # (no current event loop), so get_event_loop() would fail here.
+    asyncio.run(init_db())
+    logger.info("Caller database initialised during prewarm")
 
 
 server.setup_fnc = prewarm
@@ -63,46 +115,36 @@ server.setup_fnc = prewarm
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: JobContext):
     # Logging setup
-    # Add any other context you want in all log entries here
     ctx.log_context_fields = {
         "room": ctx.room.name,
     }
 
-    # Set up a voice AI pipeline using Murf Falcon, Groq Llama, Deepgram, and the LiveKit turn detector
+    # Set up a voice AI pipeline
     session = AgentSession(
-        # Speech-to-text (STT) is your agent's ears, turning the user's speech into text that the LLM can understand
-        # See all available models at https://docs.livekit.io/agents/models/stt/
         stt=deepgram.STT(
             model="nova-3",
             language="multi",
             smart_format=True,
             keyterm=[
-                "dukaan", "bhaiya", "kirana", "aata", "chawal", "cheeni", "dal", "tel",
-                "saman", "order", "price", "rate", "delivery", "udhaar", "batao",
-                "bataiye", "kitna", "kab", "namaste", "shukriya", "rupee", "kilo"
+                "dukaan", "bhaiya", "kirana", "aata", "chawal", "cheeni",
+                "dal", "tel", "saman", "order", "price", "rate", "delivery",
+                "udhaar", "batao", "bataiye", "kitna", "kab", "namaste",
+                "shukriya", "rupee", "kilo",
             ],
         ),
-        # A Large Language Model (LLM) is your agent's brain, processing user input and generating a response
-        # See all available models at https://docs.livekit.io/agents/models/llm/
         llm=openai.LLM(
             model="llama-3.3-70b-versatile",
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv("GROQ_API_KEY"),
         ),
-        # Text-to-speech (TTS) is your agent's voice, turning the LLM's text into speech that the user can hear
-        # See all available models as well as voice selections at https://docs.livekit.io/agents/models/tts/
         tts=murf.TTS(
             voice="hi-IN-anisha",
             style="Conversation",
             tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
             text_pacing=True,
         ),
-        # VAD and turn detection are used to determine when the user is speaking and when the agent should respond
-        # See more at https://docs.livekit.io/agents/build/turns
-        turn_detection=MultilingualModel(),
+        turn_detection=TurnDetector(),
         vad=ctx.proc.userdata["vad"],
-        # allow the LLM to generate a response while waiting for the end of turn
-        # See more at https://docs.livekit.io/agents/build/audio/#preemptive-generation
         preemptive_generation=True,
     )
 
@@ -112,52 +154,106 @@ async def my_agent(ctx: JobContext):
         if not transcript:
             return
 
-        # Check for Devanagari script characters (native Hindi)
-        has_devanagari = any(ord(c) >= 0x0900 and ord(c) <= 0x097F for c in transcript)
+        has_devanagari = any(
+            0x0900 <= ord(c) <= 0x097F for c in transcript
+        )
 
-        # Check for common Hinglish/Hindi romanized keywords
         hindi_keywords = {
-            "kya", "hai", "aur", "main", "haan", "nahin", "aap", "namaste", "shukriya",
-            "dukaan", "bhaiya", "kirana", "aata", "chawal", "cheeni", "dal", "saman",
-            "order", "rate", "delivery", "udhaar", "batao", "bataiye", "samjhao",
-            "mein", "ke", "ki", "se", "ko", "ka", "jo", "toh", "bhi", "ho", "kar", "raha",
-            "rahi", "rha", "rhi", "mujhe", "mera", "meri", "hum", "tum", "apna", "apni",
-            "karke", "karo", "karna", "tha", "thi", "the", "ab", "kab", "tab", "sab", "kitna"
+            "kya", "hai", "aur", "main", "haan", "nahin", "aap",
+            "namaste", "shukriya", "dukaan", "bhaiya", "kirana", "aata",
+            "chawal", "cheeni", "dal", "saman", "order", "rate",
+            "delivery", "udhaar", "batao", "bataiye", "samjhao", "mein",
+            "ke", "ki", "se", "ko", "ka", "jo", "toh", "bhi", "ho",
+            "kar", "raha", "rahi", "rha", "rhi", "mujhe", "mera",
+            "meri", "hum", "tum", "apna", "apni", "karke", "karo",
+            "karna", "tha", "thi", "the", "ab", "kab", "tab", "sab",
+            "kitna",
         }
         words = set(transcript.split())
         has_hindi_words = not words.isdisjoint(hindi_keywords)
 
         if has_devanagari or has_hindi_words:
-            logger.info(f"Detected Hindi/Hinglish speech: '{ev.transcript}'. Switching TTS to hi-IN-anisha")
+            logger.info(
+                "Detected Hindi/Hinglish: '%s'. Switching to hi-IN-anisha",
+                ev.transcript,
+            )
             session.tts.update_options(voice="hi-IN-anisha")
         else:
-            logger.info(f"Detected English speech: '{ev.transcript}'. Switching TTS to en-IN-anisha")
+            logger.info(
+                "Detected English: '%s'. Switching to en-IN-anisha",
+                ev.transcript,
+            )
             session.tts.update_options(voice="en-IN-anisha")
 
-    # To use a realtime model instead of a voice pipeline, use the following session setup instead.
-    # (Note: This is for the OpenAI Realtime API. For other providers, see https://docs.livekit.io/agents/models/realtime/))
-    # 1. Install livekit-agents[openai]
-    # 2. Set OPENAI_API_KEY in .env.local
-    # 3. Add `from livekit.plugins import openai` to the top of this file
-    # 4. Use the following session setup instead of the version above
-    # session = AgentSession(
-    #     llm=openai.realtime.RealtimeModel(voice="marin")
-    # )
-
-    # # Add a virtual avatar to the session, if desired
-    # # For other providers, see https://docs.livekit.io/agents/models/avatar/
-    # avatar = hedra.AvatarSession(
-    #   avatar_id="...",  # See https://docs.livekit.io/agents/models/avatar/plugins/hedra
-    # )
-    # # Start the avatar and wait for it to join
-    # await avatar.start(session, room=ctx.room)
-
-    # Join the room and connect to the user first
+    # Connect to the room first
     await ctx.connect()
 
-    # Start the session, which initializes the voice pipeline and warms up the models
+    # --- Caller Memory: Auto-lookup ---
+    caller_context = ""
+    caller_data = None
+    greeting = DEFAULT_GREETING
+
+    # Get the remote participant's identity
+    participant = None
+    for p in ctx.room.remote_participants.values():
+        participant = p
+        break
+
+    if participant is None:
+        # Wait for a participant to connect
+        try:
+            participant = await asyncio.wait_for(
+                _wait_for_participant(ctx),
+                timeout=10.0,
+            )
+        except asyncio.TimeoutError:
+            logger.warning(
+                "No participant joined within timeout, using default greeting"
+            )
+
+    if participant:
+        caller_id = participant.identity
+        logger.info("Caller connected with identity: %s", caller_id)
+
+        # Look up the caller in the database
+        caller_data = await lookup_caller(caller_id)
+
+        if caller_data:
+            # Returning caller - build personalised context
+            name = caller_data.get("name", "")
+            facts = caller_data.get("facts", {})
+            last_seen = caller_data.get("last_interaction", "")
+
+            caller_context = (
+                f"This is a RETURNING caller. Their user_id is '{caller_id}'.\n"
+                f"Name: {name}\n"
+                f"Language preference: {caller_data.get('language_pref', 'hi')}\n"
+                f"Known facts: {json.dumps(facts, ensure_ascii=False)}\n"
+                f"Last interaction: {last_seen}\n"
+                f"Greet them warmly by name and reference what you know."
+            )
+
+            # Build a personalised greeting
+            facts_summary = ""
+            if facts.get("past_orders"):
+                facts_summary = (
+                    f" Pichli baar aapne {facts['past_orders']} manga tha."
+                )
+            greeting = f"Namaste {name}!{facts_summary} Aaj kya chahiye?"
+
+            logger.info("Returning caller: %s, facts: %s", name, facts)
+        else:
+            caller_context = (
+                f"This is a NEW caller. Their user_id is '{caller_id}'.\n"
+                "Use the standard greeting. Try to learn their name "
+                "during the conversation.\n"
+                "When you learn useful info, ask for their consent "
+                "before saving it."
+            )
+
+    # Start the session with caller context injected into the agent
     await session.start(
-        agent=Assistant(),
+        agent=Assistant(caller_context=caller_context),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(
@@ -171,11 +267,27 @@ async def my_agent(ctx: JobContext):
         ),
     )
 
-    # Send first-turn greeting
-    await session.say(
-        "नमस्ते! मैं दुकान साथी हूँ, आपकी लोकल दुकान की डिजिटल सहायिका। बताइए, आज आपको क्या सामान चाहिए या स्टोर के बारे में क्या जानकारी चाहिए?",
-        allow_interruptions=True,
-    )
+    # Send the appropriate greeting
+    await session.say(greeting, allow_interruptions=True)
+
+
+async def _wait_for_participant(ctx: JobContext):
+    """Wait for a remote participant to join the room."""
+    future = asyncio.get_event_loop().create_future()
+
+    def on_participant_connected(participant):
+        if not future.done():
+            future.set_result(participant)
+
+    ctx.room.on("participant_connected", on_participant_connected)
+
+    # Check if someone already connected while we were setting up
+    for p in ctx.room.remote_participants.values():
+        if not future.done():
+            future.set_result(p)
+            break
+
+    return await future
 
 
 if __name__ == "__main__":

@@ -45,8 +45,10 @@ export async function POST(req: Request) {
     }
       
     // Generate participant token
+    // Use a stable identity so the caller memory DB can recognise returning users.
+    // In production this would come from auth / phone number; for testing we fix it.
     const participantName = 'user';
-    const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10_000)}`;
+    const participantIdentity = 'dukaan-caller-001';
     const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
 
     const participantToken = await createParticipantToken(

@@ -14,6 +14,7 @@ dependencies = [
     "livekit-murf>=0.1.1",
     "livekit-plugins-noise-cancellation~=0.2",
     "python-dotenv",
+    "aiosqlite>=0.20.0",
 ]
 
 [dependency-groups]
