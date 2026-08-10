@@ -1,0 +1,232 @@
+2026-08-10 23:30:40,466 - agent.prices - INFO - Loaded local price data: 60 items
+2026-08-10 23:30:40,590 - livekit.agents - WARNING - dev mode is deprecated and will be removed in a future release; use `lk agent dev` instead (https://docs.livekit.io/reference/developer-tools/livekit-cli/#setup)
+2026-08-10 23:30:40,591 - livekit.agents - WARNING - in-process auto-reload has been removed from the Python CLI; use `lk agent dev` for hot-reload
+2026-08-10 23:30:40,665 - livekit.agents - DEBUG - no system trust store found, setting SSL_CERT_FILE to the certifi bundle
+2026-08-10 23:30:40,669 - livekit.agents - INFO - starting worker
+2026-08-10 23:30:40,674 - livekit.agents - INFO - plugin registered
+2026-08-10 23:30:40,682 - livekit.agents - INFO - plugin registered
+2026-08-10 23:30:40,689 - livekit.agents - INFO - plugin registered
+2026-08-10 23:30:40,694 - livekit.agents - INFO - plugin registered
+2026-08-10 23:30:40,731 - livekit.agents - INFO - HTTP server listening on :55553
+2026-08-10 23:30:41,669 - livekit.agents - INFO - registered worker
+2026-08-10 23:31:59,114 - livekit.agents - INFO - received job request
+2026-08-10 23:31:59,198 - livekit.agents - DEBUG - received assignment
+2026-08-10 23:31:59,219 - livekit.agents - WARNING - no warmed process available for job, waiting for one to be created
+2026-08-10 23:31:59,412 - livekit.agents - INFO - initializing job runner
+2026-08-10 23:32:00,099 - agent.db - INFO - Caller database initialised at D:\murf Ai\murf-livekit-starter\backend\data\callers.db
+2026-08-10 23:32:00,110 - agent - INFO - Caller database initialised during prewarm
+2026-08-10 23:32:00,124 - livekit.agents - INFO - job runner initialized
+2026-08-10 23:32:00,966 - livekit.agents - WARNING - preemptive_generation, turn_detection are deprecated and will be removed in v2.0. Use turn_handling=TurnHandlingOptions(...) instead
+2026-08-10 23:32:01,543 - livekit - INFO - livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://voiceragent-x5sz1f2d.omumbai1a.production.livekit.cloud/rtc/v1
+2026-08-10 23:32:01,673 - livekit - DEBUG - rustls::webpki::anchors:54:rustls::webpki::anchors - add_parsable_certificates processed 137 valid and 0 invalid certs
+2026-08-10 23:32:01,673 - livekit - DEBUG - tokio_tungstenite::tls::encryption::rustls:118:tokio_tungstenite::tls::encryption::rustls - Added 137/137 native root certificates (ignored 0)
+2026-08-10 23:32:01,673 - livekit - DEBUG - rustls::client::hs:1134:rustls::client::hs - No cached session for DnsName("voiceragent-x5sz1f2d.omumbai1a.production.livekit.cloud")
+2026-08-10 23:32:01,674 - livekit - DEBUG - rustls::client::hs:106:rustls::client::hs - Not resuming any session
+2026-08-10 23:32:01,731 - livekit - DEBUG - rustls::client::hs:798:rustls::client::hs - Using ciphersuite TLS13_AES_128_GCM_SHA256
+2026-08-10 23:32:01,732 - livekit - DEBUG - rustls::client::tls13:162:rustls::client::tls13 - Not resuming
+2026-08-10 23:32:01,733 - livekit - DEBUG - rustls::client::tls13:499:rustls::client::tls13 - TLS1.3 encrypted extensions: ServerExtensions { unknown_extensions: {}, .. }
+2026-08-10 23:32:01,734 - livekit - DEBUG - rustls::client::hs:627:rustls::client::hs - ALPN protocol is None
+2026-08-10 23:32:01,784 - livekit - DEBUG - tungstenite::handshake::client:102:tungstenite::handshake::client - Client handshake done.
+2026-08-10 23:32:03,170 - agent - INFO - Caller connected with identity: dukaan-caller-001
+2026-08-10 23:32:03,235 - agent.db - INFO - Found returning caller: Aniket Dubey (dukaan-caller-001)
+2026-08-10 23:32:03,236 - agent - INFO - Returning caller: Aniket Dubey, facts: {'past_orders': '5 kg aata, 1 kg dal', 'area': 'Not specified'}
+2026-08-10 23:32:03,259 - livekit.agents - DEBUG - configuring session recording
+2026-08-10 23:32:03,606 - livekit.agents - DEBUG - input stream attached
+2026-08-10 23:32:03,624 - livekit.agents - DEBUG - input stream detached
+2026-08-10 23:32:03,625 - livekit.agents - DEBUG - input stream attached
+2026-08-10 23:32:04,236 - livekit.agents - INFO - adaptive interruption detector initialized
+2026-08-10 23:32:04,453 - livekit.agents - DEBUG - start reading stream
+2026-08-10 23:32:04,470 - livekit.agents - DEBUG - http_session(): creating a new httpclient ctx
+2026-08-10 23:32:05,239 - livekit.agents - DEBUG - using audio io: `RoomIO` -> `RecorderIO` -> `AgentSession` -> `RecorderIO` -> `TranscriptSynchronizer` -> `AudioSinkProxy` -> `RoomIO`
+2026-08-10 23:32:05,240 - livekit.agents - DEBUG - using transcript io: `AgentSession` -> `TranscriptSynchronizer` -> `RoomIO`
+2026-08-10 23:32:05,554 - livekit.agents - DEBUG - sent text to tts
+2026-08-10 23:32:05,557 - livekit.plugins.murf - INFO - [Murf TTS] Stream started - context_id=543f47891fe3, voice=hi-IN-anisha, style=Conversation, locale=None, min_buffer_size=3, max_buffer_delay_in_ms=0, endpoint=https://global.api.murf.ai
+2026-08-10 23:32:05,665 - livekit.plugins.murf - INFO - [Murf TTS] Murf TTFB (first sentence to first audio): 108.14 ms
+2026-08-10 23:32:05,718 - livekit.agents - DEBUG - aec warmup active, disabling interruptions for 3.00s
+2026-08-10 23:32:06,212 - livekit.agents - WARNING - turn detection transport latency is too high: 525ms
+2026-08-10 23:32:06,214 - livekit.agents - DEBUG - audio turn detector initialized
+2026-08-10 23:32:06,236 - livekit.agents - DEBUG - adaptive interruption session created
+2026-08-10 23:32:06,610 - livekit.plugins.deepgram - DEBUG - Established new Deepgram STT WebSocket connection:
+2026-08-10 23:32:06,620 - livekit.agents - DEBUG - sent text to tts
+2026-08-10 23:32:08,715 - livekit.agents - DEBUG - aec warmup expired, re-enabling interruptions
+2026-08-10 23:32:13,593 - livekit.agents - DEBUG - conversation_item_added
+2026-08-10 23:32:19,348 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:32:19,403 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:21,336 - livekit.agents - DEBUG - user turn committed
+2026-08-10 23:32:21,338 - livekit.agents - DEBUG - using preemptive generation
+2026-08-10 23:32:21,345 - livekit.agents - DEBUG - conversation_item_added
+2026-08-10 23:32:21,357 - livekit.agents - DEBUG - executing tool
+2026-08-10 23:32:21,366 - agent - INFO - Tool call: checking availability for 'चावल'
+2026-08-10 23:32:21,379 - livekit.agents - DEBUG - tools execution completed
+2026-08-10 23:32:21,585 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99802, Requested 2981. Please try again in 40m4.512s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpde21qef99gbacme44e3s2, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99802, Requested 2981. Please try again in 40m4.512s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:32:21,738 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99802, Requested 2962. Please try again in 39m48.096s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpde26zed5tm29twx911rd7, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99802, Requested 2962. Please try again in 39m48.096s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:23,819 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99800, Requested 2962. Please try again in 39m46.368s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpde47be3qrt4a8a9aamyd2, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99800, Requested 2962. Please try again in 39m46.368s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:25,909 - livekit.agents - ERROR - Error in _llm_inference_task
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 263, in _main_task
+    await self._run()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\inference\llm.py", line 490, in _run
+    raise APIStatusError(
+livekit.agents._exceptions.APIStatusError: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99797, Requested 2962. Please try again in 39m43.776s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpde68nekk89aevs7d04ej3, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99797, Requested 2962. Please try again in 39m43.776s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\utils\log.py", line 17, in async_fn_logs
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\opentelemetry\util\_decorator.py", line 71, in async_wrapper
+    return await func(*args, **kwargs)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\generation.py", line 233, in _llm_inference_task
+    async for chunk in llm_node:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\agent.py", line 544, in llm_node
+    async for chunk in stream:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 433, in __anext__
+    raise exc  # noqa: B904
+    ^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 235, in _traceable_main_task
+    await self._main_task()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 285, in _main_task
+    raise APIConnectionError(
+livekit.agents._exceptions.APIConnectionError: failed to generate LLM completion after 4 attempts
+2026-08-10 23:32:31,275 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:32:31,298 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:31,299 - livekit.agents - DEBUG - user turn committed
+2026-08-10 23:32:31,302 - livekit.agents - DEBUG - using preemptive generation
+2026-08-10 23:32:31,312 - livekit.agents - DEBUG - conversation_item_added
+2026-08-10 23:32:31,368 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99791, Requested 2979. Please try again in 39m53.279999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdebkse4385djk6b5hw3wa, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99791, Requested 2979. Please try again in 39m53.279999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:32:31,525 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99791, Requested 2998. Please try again in 40m9.696s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdebrsewa94mkyswwwydxp, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99791, Requested 2998. Please try again in 40m9.696s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:33,660 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99788, Requested 2979. Please try again in 39m50.688s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdedsmet0s62f4kx2ztnqt, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99788, Requested 2979. Please try again in 39m50.688s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:34,447 - agent - INFO - Detected English: 'Over timeout is'. Switching to en-IN-anisha
+2026-08-10 23:32:34,627 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:32:34,630 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:35,989 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:32:36,019 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:36,075 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99786, Requested 2988. Please try again in 39m56.736s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdeg6zewrbxghs91h5qjp6, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99786, Requested 2988. Please try again in 39m56.736s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:32:36,243 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99785, Requested 2988. Please try again in 39m55.872s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdegc9ed2ap3gh5kggh8be, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99785, Requested 2988. Please try again in 39m55.872s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:38,293 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3007. Please try again in 40m10.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdejc5etw9vendj6n3xqx5, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3007. Please try again in 40m10.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:38,356 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:38,402 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:32:38,418 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:32:38,489 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3008. Please try again in 40m11.424s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdejj9ecar781atrc6prtk, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3008. Please try again in 40m11.424s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:32:38,667 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3008. Please try again in 40m11.424s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdejqqe4r9nm3ra85rmh6z, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99783, Requested 3008. Please try again in 40m11.424s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:40,244 - livekit.agents - DEBUG - user turn committed
+2026-08-10 23:32:40,248 - livekit.agents - DEBUG - using preemptive generation
+2026-08-10 23:32:40,250 - livekit.agents - DEBUG - conversation_item_added
+2026-08-10 23:32:40,734 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99780, Requested 2989. Please try again in 39m52.416s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdemrkevcv3yn4h8wbx3ny, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99780, Requested 2989. Please try again in 39m52.416s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:32:42,813 - livekit.agents - ERROR - Error in _llm_inference_task
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 263, in _main_task
+    await self._run()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\inference\llm.py", line 490, in _run
+    raise APIStatusError(
+livekit.agents._exceptions.APIStatusError: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99778, Requested 2989. Please try again in 39m50.688s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdeprse7zty2t0wwmqc6gd, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99778, Requested 2989. Please try again in 39m50.688s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\utils\log.py", line 17, in async_fn_logs
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\opentelemetry\util\_decorator.py", line 71, in async_wrapper
+    return await func(*args, **kwargs)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\generation.py", line 233, in _llm_inference_task
+    async for chunk in llm_node:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\agent.py", line 544, in llm_node
+    async for chunk in stream:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 433, in __anext__
+    raise exc  # noqa: B904
+    ^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 235, in _traceable_main_task
+    await self._main_task()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 285, in _main_task
+    raise APIConnectionError(
+livekit.agents._exceptions.APIConnectionError: failed to generate LLM completion after 4 attempts
+2026-08-10 23:33:36,243 - agent - INFO - Detected Hindi/Hinglish: 'मज़ा आ गया भाई एकदम crazy था'. Switching to hi-IN-anisha
+2026-08-10 23:33:39,229 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:33:39,315 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99712, Requested 3020. Please try again in 39m20.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgdz4ehe889dw0kxr4rcd, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99712, Requested 3020. Please try again in 39m20.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:33:39,513 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99712, Requested 3039. Please try again in 39m36.864s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdge4tec29s5n2n9e0zcp4, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99712, Requested 3039. Please try again in 39m36.864s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:33:41,608 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99710, Requested 3020. Please try again in 39m18.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgg6jesqr6wma6pa88r4d, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99710, Requested 3020. Please try again in 39m18.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:33:43,744 - livekit.agents - ERROR - Error in _llm_inference_task
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 263, in _main_task
+    await self._run()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\inference\llm.py", line 490, in _run
+    raise APIStatusError(
+livekit.agents._exceptions.APIStatusError: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99707, Requested 3020. Please try again in 39m16.127999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgj97en7rkc51asd4eny3, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99707, Requested 3020. Please try again in 39m16.127999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\utils\log.py", line 17, in async_fn_logs
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\opentelemetry\util\_decorator.py", line 71, in async_wrapper
+    return await func(*args, **kwargs)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\generation.py", line 233, in _llm_inference_task
+    async for chunk in llm_node:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\agent.py", line 544, in llm_node
+    async for chunk in stream:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 433, in __anext__
+    raise exc  # noqa: B904
+    ^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 235, in _traceable_main_task
+    await self._main_task()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 285, in _main_task
+    raise APIConnectionError(
+livekit.agents._exceptions.APIConnectionError: failed to generate LLM completion after 4 attempts
+2026-08-10 23:33:44,208 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:33:46,967 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:33:47,008 - livekit.agents - DEBUG - received user transcript
+2026-08-10 23:33:47,010 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:33:50,518 - livekit.agents - DEBUG - eot prediction
+2026-08-10 23:33:50,519 - livekit.agents - DEBUG - user turn committed
+2026-08-10 23:33:50,541 - livekit.agents - DEBUG - conversation_item_added
+2026-08-10 23:33:50,607 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99699, Requested 3085. Please try again in 40m5.376s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgrzxevbbc6fxz4mncna3, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99699, Requested 3085. Please try again in 40m5.376s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 0.1s
+2026-08-10 23:33:50,794 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99699, Requested 3066. Please try again in 39m48.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgs5zex4sebm4ny0qz96e, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99699, Requested 3066. Please try again in 39m48.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:33:52,871 - livekit.agents - WARNING - failed to generate LLM completion: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99697, Requested 3085. Please try again in 40m3.648s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgv6neq8r7v9vznmr2bqh, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99697, Requested 3085. Please try again in 40m3.648s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}, retrying in 2.0s
+2026-08-10 23:33:54,957 - livekit.agents - ERROR - AgentSession is closing due to unrecoverable error: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99694, Requested 3066. Please try again in 39m44.64s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgx7wet88jaw8xbewyyf0, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99694, Requested 3066. Please try again in 39m44.64s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}
+2026-08-10 23:33:54,968 - livekit.agents - ERROR - Error in _llm_inference_task
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 263, in _main_task
+    await self._run()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\inference\llm.py", line 490, in _run
+    raise APIStatusError(
+livekit.agents._exceptions.APIStatusError: message="Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99694, Requested 3066. Please try again in 39m44.64s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}", status_code=429, retryable=True, request_id=req_01kzpdgx7wet88jaw8xbewyyf0, body={'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1nj9z8aeh1v31ap3sk9j5qs` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99694, Requested 3066. Please try again in 39m44.64s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\utils\log.py", line 17, in async_fn_logs
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\opentelemetry\util\_decorator.py", line 71, in async_wrapper
+    return await func(*args, **kwargs)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\generation.py", line 233, in _llm_inference_task
+    async for chunk in llm_node:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\voice\agent.py", line 544, in llm_node
+    async for chunk in stream:
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 433, in __anext__
+    raise exc  # noqa: B904
+    ^^^^^^^^^
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 235, in _traceable_main_task
+    await self._main_task()
+  File "D:\murf Ai\murf-livekit-starter\backend\.venv\Lib\site-packages\livekit\agents\llm\llm.py", line 285, in _main_task
+    raise APIConnectionError(
+livekit.agents._exceptions.APIConnectionError: failed to generate LLM completion after 4 attempts
+2026-08-10 23:33:54,979 - livekit.agents - DEBUG - input stream detached
+2026-08-10 23:33:55,031 - livekit.agents - DEBUG - stream closed
+2026-08-10 23:33:55,035 - livekit.agents - DEBUG - session closed
+2026-08-10 23:35:15,010 - livekit - DEBUG - tungstenite::protocol:719:tungstenite::protocol - Received close frame: Some(CloseFrame { code: Normal, reason: Utf8Bytes(b"") })
+2026-08-10 23:35:15,013 - livekit - DEBUG - tungstenite::protocol:736:tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: b"\x03\xe8" }
+2026-08-10 23:35:15,019 - livekit - WARNING - livekit_api::signal_client:652:livekit_api::signal_client - dropping pass-through signal — no stream available
+2026-08-10 23:35:15,021 - livekit - INFO - livekit::room:1794:livekit::room - Disconnected from room "voice_assistant_room_2224" with reason: RoomClosed
+2026-08-10 23:35:15,103 - livekit.agents - DEBUG - uploading session report to LiveKit Cloud
+2026-08-10 23:35:17,465 - livekit.agents - DEBUG - finished uploading
+2026-08-10 23:35:17,467 - livekit.agents - DEBUG - shutting down job task
+2026-08-10 23:35:17,477 - livekit.agents - DEBUG - job exiting
+2026-08-10 23:35:17,991 - livekit.agents - DEBUG - http_session(): closing the httpclient ctx

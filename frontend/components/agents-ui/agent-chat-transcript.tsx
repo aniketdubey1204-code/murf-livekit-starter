@@ -67,7 +67,7 @@ export function AgentChatTranscript({
           return (
             <Message key={id} title={title} from={messageOrigin}>
               <MessageContent>
-                <MessageResponse className="font-medium font-[family-name:var(--font-nunito)] text-base md:text-xl leading-relaxed text-slate-800 dark:text-slate-100 tracking-wide">
+                <MessageResponse className="font-medium font-[family-name:var(--font-nunito)] text-base md:text-xl leading-relaxed text-slate-100 tracking-wide">
                   {finalMessage}
                 </MessageResponse>
               </MessageContent>

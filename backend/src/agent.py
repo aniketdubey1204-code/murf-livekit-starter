@@ -35,6 +35,11 @@ try:
 except ImportError:
     from src.db import init_db, lookup_caller, save_caller
 
+try:
+    from prices import check_price, check_availability
+except ImportError:
+    from src.prices import check_price, check_availability
+
 # Default greeting for new callers (Hinglish - safe ASCII)
 DEFAULT_GREETING = (
     "Namaste! Main Dukaan Sathi hoon, aapki local dukaan ki digital sahayika. "
@@ -96,6 +101,20 @@ class Assistant(Agent):
         )
         return f"Caller profile saved successfully for {name}."
 
+    @function_tool
+    async def check_item_price(self, context: RunContext, item_name: str):
+        """Check the retail price of an item in the store."""
+        logger.info(f"Tool call: checking price for '{item_name}'")
+        result = await check_price(item_name)
+        return result
+
+    @function_tool
+    async def check_item_availability(self, context: RunContext, item_name: str):
+        """Check if an item is available in the store."""
+        logger.info(f"Tool call: checking availability for '{item_name}'")
+        result = await check_availability(item_name)
+        return result
+
 
 server = AgentServer()
 
@@ -133,12 +152,12 @@ async def my_agent(ctx: JobContext):
             ],
         ),
         llm=openai.LLM(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv("GROQ_API_KEY"),
         ),
         tts=murf.TTS(
-            voice="hi-IN-anisha",
+            voice="en-IN-anisha",
             style="Conversation",
             tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
             text_pacing=True,
@@ -172,18 +191,24 @@ async def my_agent(ctx: JobContext):
         words = set(transcript.split())
         has_hindi_words = not words.isdisjoint(hindi_keywords)
 
-        if has_devanagari or has_hindi_words:
-            logger.info(
-                "Detected Hindi/Hinglish: '%s'. Switching to hi-IN-anisha",
-                ev.transcript,
-            )
-            session.tts.update_options(voice="hi-IN-anisha")
+        current_voice = getattr(session.tts, "_current_voice", "en-IN-anisha")
+
+        if has_devanagari:
+            if current_voice != "hi-IN-anisha":
+                logger.info(
+                    "Detected Devanagari: '%s'. Switching to hi-IN-anisha",
+                    ev.transcript,
+                )
+                session.tts.update_options(voice="hi-IN-anisha")
+                session.tts._current_voice = "hi-IN-anisha"
         else:
-            logger.info(
-                "Detected English: '%s'. Switching to en-IN-anisha",
-                ev.transcript,
-            )
-            session.tts.update_options(voice="en-IN-anisha")
+            if current_voice != "en-IN-anisha":
+                logger.info(
+                    "Detected English/Hinglish: '%s'. Switching to en-IN-anisha",
+                    ev.transcript,
+                )
+                session.tts.update_options(voice="en-IN-anisha")
+                session.tts._current_voice = "en-IN-anisha"
 
     # Connect to the room first
     await ctx.connect()

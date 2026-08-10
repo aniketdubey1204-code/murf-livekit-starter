@@ -122,6 +122,44 @@ You should now see the voice agent UI. Click **Start talking**, allow microphone
 
 ---
 
+## Day 5: Live Market Price Lookup
+
+The agent now answers the #1 customer question: **"Rate kya hai?"** (What's the price?)
+
+### Data Sources
+
+| Source | Type | What it provides | Freshness |
+|--------|------|-----------------|-----------|
+| **data.gov.in** (AGMARKNET) | Live API | Wholesale mandi prices for 30+ commodities | Updated daily by the Government of India |
+| **prices_local.json** | Local fallback | Retail estimates for ~30 common kirana items | Hand-built, August 2025 estimates |
+
+The agent **tries the live API first** (with an 8-second timeout) and **falls back to local data** if it fails. It always tells the user which source the price came from.
+
+### Tools Added
+
+| Tool | When it fires | Example trigger |
+|------|--------------|----------------|
+| `check_item_price` | Customer asks about rate/price/cost of any item | "Atta ka rate kya hai?", "Pyaaz kitne ka hai?" |
+| `check_item_availability` | Customer asks if an item is in stock | "Paneer milega?", "Ghee hai kya?" |
+
+### Setup: data.gov.in API Key
+
+1. Register free at [data.gov.in](https://data.gov.in)
+2. Get your API key from your profile
+3. Add to `backend/.env.local`:
+   ```
+   DATA_GOV_API_KEY=your_key_here
+   ```
+
+If no API key is set, the agent uses the local fallback dataset only and notes it in its responses.
+
+### Graceful Failure
+
+When the live API is down, times out, or returns no data:
+- The agent speaks the local estimate instead
+- It explicitly says *"yeh hamare store ka anumani rate hai, live data abhi available nahi hai"*
+- It never invents a price or goes silent
+
 ## Deploy
 
 Want to deploy this beyond localhost? You'll need to deploy **two services**: the backend agent and the frontend. Both must use the same LiveKit project.

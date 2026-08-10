@@ -1,0 +1,550 @@
+{
+  "_meta": {
+    "description": "Local fallback kirana price dataset. Used for price lookups.",
+    "data_source": "Local retail estimates based on typical North India retail prices, August 2025.",
+    "last_updated": "2025-08-10",
+    "disclaimer": "These are retail estimates from our local store."
+  },
+  "items": [
+    {
+      "id": "wheat_flour",
+      "name_en": "Wheat Flour (Atta)",
+      "name_hi": "आटा",
+      "aliases": ["atta", "aata", "wheat flour", "gehun ka atta", "flour"],
+      "category": "staples",
+      "retail_price": 40,
+      "unit": "per kg"
+    },
+    {
+      "id": "rice_basmati",
+      "name_en": "Basmati Rice",
+      "name_hi": "बासमती चावल",
+      "aliases": ["basmati", "basmati chawal", "basmati rice"],
+      "category": "staples",
+      "retail_price": 95,
+      "unit": "per kg"
+    },
+    {
+      "id": "rice_regular",
+      "name_en": "Rice (Regular)",
+      "name_hi": "चावल",
+      "aliases": ["chawal", "rice", "chaawal", "saada chawal", "sona masoori"],
+      "category": "staples",
+      "retail_price": 50,
+      "unit": "per kg"
+    },
+    {
+      "id": "sugar",
+      "name_en": "Sugar",
+      "name_hi": "चीनी",
+      "aliases": ["cheeni", "sugar", "chini", "shakkar"],
+      "category": "staples",
+      "retail_price": 44,
+      "unit": "per kg"
+    },
+    {
+      "id": "salt",
+      "name_en": "Salt",
+      "name_hi": "नमक",
+      "aliases": ["namak", "salt", "iodised salt", "tata salt"],
+      "category": "staples",
+      "retail_price": 28,
+      "unit": "per kg"
+    },
+    {
+      "id": "toor_dal",
+      "name_en": "Toor Dal (Arhar)",
+      "name_hi": "तूर दाल",
+      "aliases": ["toor dal", "arhar dal", "arhar", "toor", "dal", "daal"],
+      "category": "pulses",
+      "retail_price": 160,
+      "unit": "per kg"
+    },
+    {
+      "id": "moong_dal",
+      "name_en": "Moong Dal",
+      "name_hi": "मूंग दाल",
+      "aliases": ["moong dal", "moong", "mung dal", "mung", "moong ki dal", "peeli dal"],
+      "category": "pulses",
+      "retail_price": 120,
+      "unit": "per kg"
+    },
+    {
+      "id": "moong_dal_chilka",
+      "name_en": "Moong Dal Chilka",
+      "name_hi": "छिलका मूंग दाल",
+      "aliases": ["moong chilka", "chilka moong", "hari dal"],
+      "category": "pulses",
+      "retail_price": 115,
+      "unit": "per kg"
+    },
+    {
+      "id": "chana_dal",
+      "name_en": "Chana Dal",
+      "name_hi": "चना दाल",
+      "aliases": ["chana dal", "chana", "chane ki dal", "gram dal"],
+      "category": "pulses",
+      "retail_price": 90,
+      "unit": "per kg"
+    },
+    {
+      "id": "urad_dal",
+      "name_en": "Urad Dal",
+      "name_hi": "उड़द दाल",
+      "aliases": ["urad dal", "urad", "urid dal", "maash", "kaali dal"],
+      "category": "pulses",
+      "retail_price": 130,
+      "unit": "per kg"
+    },
+    {
+      "id": "masoor_dal",
+      "name_en": "Masoor Dal",
+      "name_hi": "मसूर दाल",
+      "aliases": ["masoor dal", "masoor", "masur dal", "red lentils", "lentils"],
+      "category": "pulses",
+      "retail_price": 95,
+      "unit": "per kg"
+    },
+    {
+      "id": "kabuli_chana",
+      "name_en": "Kabuli Chana (Chole)",
+      "name_hi": "काबुली चना (छोले)",
+      "aliases": ["chole", "kabuli chana", "safed chana", "chickpeas"],
+      "category": "pulses",
+      "retail_price": 140,
+      "unit": "per kg"
+    },
+    {
+      "id": "kala_chana",
+      "name_en": "Kala Chana",
+      "name_hi": "काला चना",
+      "aliases": ["kala chana", "black chickpeas", "chana"],
+      "category": "pulses",
+      "retail_price": 95,
+      "unit": "per kg"
+    },
+    {
+      "id": "rajma",
+      "name_en": "Rajma",
+      "name_hi": "राजमा",
+      "aliases": ["rajma", "kidney beans"],
+      "category": "pulses",
+      "retail_price": 150,
+      "unit": "per kg"
+    },
+    {
+      "id": "mustard_oil",
+      "name_en": "Mustard Oil",
+      "name_hi": "सरसों का तेल",
+      "aliases": ["sarson ka tel", "mustard oil", "sarson tel", "tel", "kacchi ghani"],
+      "category": "oils",
+      "retail_price": 165,
+      "unit": "per litre"
+    },
+    {
+      "id": "refined_oil",
+      "name_en": "Refined Oil (Soyabean/Sunflower)",
+      "name_hi": "रिफाइंड तेल",
+      "aliases": ["refined oil", "refined tel", "soyabean oil", "sunflower oil", "cooking oil", "fortune"],
+      "category": "oils",
+      "retail_price": 135,
+      "unit": "per litre"
+    },
+    {
+      "id": "peanut_oil",
+      "name_en": "Peanut Oil (Mungfali)",
+      "name_hi": "मूंगफली का तेल",
+      "aliases": ["mungfali tel", "peanut oil", "groundnut oil", "sing tel"],
+      "category": "oils",
+      "retail_price": 190,
+      "unit": "per litre"
+    },
+    {
+      "id": "onion",
+      "name_en": "Onion",
+      "name_hi": "प्याज",
+      "aliases": ["pyaaz", "onion", "pyaj", "kanda", "piyaz"],
+      "category": "vegetables",
+      "retail_price": 40,
+      "unit": "per kg"
+    },
+    {
+      "id": "potato",
+      "name_en": "Potato",
+      "name_hi": "आलू",
+      "aliases": ["aloo", "potato", "aaloo", "batata"],
+      "category": "vegetables",
+      "retail_price": 30,
+      "unit": "per kg"
+    },
+    {
+      "id": "tomato",
+      "name_en": "Tomato",
+      "name_hi": "टमाटर",
+      "aliases": ["tamatar", "tomato", "tamater"],
+      "category": "vegetables",
+      "retail_price": 50,
+      "unit": "per kg"
+    },
+    {
+      "id": "garlic",
+      "name_en": "Garlic",
+      "name_hi": "लहसुन",
+      "aliases": ["lahsun", "lasun", "garlic", "lehsun"],
+      "category": "vegetables",
+      "retail_price": 250,
+      "unit": "per kg"
+    },
+    {
+      "id": "ginger",
+      "name_en": "Ginger",
+      "name_hi": "अदरक",
+      "aliases": ["adrak", "ginger"],
+      "category": "vegetables",
+      "retail_price": 120,
+      "unit": "per kg"
+    },
+    {
+      "id": "milk",
+      "name_en": "Milk (Full Cream)",
+      "name_hi": "दूध (फुल क्रीम)",
+      "aliases": ["doodh", "milk", "dudh", "amul doodh", "mother dairy"],
+      "category": "dairy",
+      "retail_price": 66,
+      "unit": "per litre"
+    },
+    {
+      "id": "curd",
+      "name_en": "Curd / Yogurt",
+      "name_hi": "दही",
+      "aliases": ["dahi", "curd", "yogurt"],
+      "category": "dairy",
+      "retail_price": 35,
+      "unit": "per 400g"
+    },
+    {
+      "id": "butter",
+      "name_en": "Butter",
+      "name_hi": "मक्खन",
+      "aliases": ["makhan", "butter", "amul butter"],
+      "category": "dairy",
+      "retail_price": 60,
+      "unit": "per 100g"
+    },
+    {
+      "id": "ghee",
+      "name_en": "Ghee (Desi)",
+      "name_hi": "देसी घी",
+      "aliases": ["ghee", "desi ghee", "ghi"],
+      "category": "dairy",
+      "retail_price": 650,
+      "unit": "per kg"
+    },
+    {
+      "id": "paneer",
+      "name_en": "Paneer",
+      "name_hi": "पनीर",
+      "aliases": ["paneer", "cottage cheese", "panir"],
+      "category": "dairy",
+      "retail_price": 380,
+      "unit": "per kg"
+    },
+    {
+      "id": "turmeric",
+      "name_en": "Turmeric Powder",
+      "name_hi": "हल्दी",
+      "aliases": ["haldi", "turmeric", "haldi powder"],
+      "category": "spices",
+      "retail_price": 260,
+      "unit": "per kg"
+    },
+    {
+      "id": "red_chilli",
+      "name_en": "Red Chilli Powder",
+      "name_hi": "लाल मिर्च",
+      "aliases": ["lal mirch", "red chilli", "mirchi", "chilli powder", "mirch"],
+      "category": "spices",
+      "retail_price": 320,
+      "unit": "per kg"
+    },
+    {
+      "id": "cumin",
+      "name_en": "Cumin Seeds",
+      "name_hi": "जीरा",
+      "aliases": ["jeera", "zeera", "cumin", "jira"],
+      "category": "spices",
+      "retail_price": 650,
+      "unit": "per kg"
+    },
+    {
+      "id": "coriander_powder",
+      "name_en": "Coriander Powder",
+      "name_hi": "धनिया पाउडर",
+      "aliases": ["dhaniya", "coriander", "dhaniya powder", "dhania"],
+      "category": "spices",
+      "retail_price": 190,
+      "unit": "per kg"
+    },
+    {
+      "id": "garam_masala",
+      "name_en": "Garam Masala",
+      "name_hi": "गरम मसाला",
+      "aliases": ["garam masala", "masala"],
+      "category": "spices",
+      "retail_price": 80,
+      "unit": "per 100g"
+    },
+    {
+      "id": "black_pepper",
+      "name_en": "Black Pepper",
+      "name_hi": "काली मिर्च",
+      "aliases": ["kali mirch", "black pepper", "gol mirch"],
+      "category": "spices",
+      "retail_price": 950,
+      "unit": "per kg"
+    },
+    {
+      "id": "cloves",
+      "name_en": "Cloves",
+      "name_hi": "लौंग",
+      "aliases": ["laung", "cloves", "lavang"],
+      "category": "spices",
+      "retail_price": 120,
+      "unit": "per 100g"
+    },
+    {
+      "id": "cardamom",
+      "name_en": "Green Cardamom",
+      "name_hi": "इलायची",
+      "aliases": ["elaichi", "cardamom", "choti elaichi", "hari elaichi"],
+      "category": "spices",
+      "retail_price": 250,
+      "unit": "per 100g"
+    },
+    {
+      "id": "mustard_seeds",
+      "name_en": "Mustard Seeds",
+      "name_hi": "सरसों / राई",
+      "aliases": ["sarson", "rai", "mustard seeds"],
+      "category": "spices",
+      "retail_price": 110,
+      "unit": "per kg"
+    },
+    {
+      "id": "tea",
+      "name_en": "Tea Leaves",
+      "name_hi": "चाय पत्ती",
+      "aliases": ["chai", "chai patti", "tea", "tea leaves", "tata tea", "red label"],
+      "category": "beverages",
+      "retail_price": 450,
+      "unit": "per kg"
+    },
+    {
+      "id": "coffee",
+      "name_en": "Coffee Powder",
+      "name_hi": "कॉफी",
+      "aliases": ["coffee", "nescafe", "bru"],
+      "category": "beverages",
+      "retail_price": 180,
+      "unit": "per 50g"
+    },
+    {
+      "id": "maida",
+      "name_en": "Maida (Refined Flour)",
+      "name_hi": "मैदा",
+      "aliases": ["maida", "refined flour", "all purpose flour"],
+      "category": "staples",
+      "retail_price": 45,
+      "unit": "per kg"
+    },
+    {
+      "id": "sooji",
+      "name_en": "Sooji (Semolina)",
+      "name_hi": "सूजी",
+      "aliases": ["sooji", "suji", "semolina", "rava", "rawa"],
+      "category": "staples",
+      "retail_price": 50,
+      "unit": "per kg"
+    },
+    {
+      "id": "besan",
+      "name_en": "Besan (Gram Flour)",
+      "name_hi": "बेसन",
+      "aliases": ["besan", "gram flour", "chickpea flour"],
+      "category": "staples",
+      "retail_price": 100,
+      "unit": "per kg"
+    },
+    {
+      "id": "jaggery",
+      "name_en": "Jaggery (Gur)",
+      "name_hi": "गुड़",
+      "aliases": ["gur", "gud", "jaggery"],
+      "category": "staples",
+      "retail_price": 60,
+      "unit": "per kg"
+    },
+    {
+      "id": "poha",
+      "name_en": "Poha (Flattened Rice)",
+      "name_hi": "पोहा",
+      "aliases": ["poha", "chiwda", "flattened rice"],
+      "category": "staples",
+      "retail_price": 65,
+      "unit": "per kg"
+    },
+    {
+      "id": "sabudana",
+      "name_en": "Sabudana",
+      "name_hi": "साबूदाना",
+      "aliases": ["sabudana", "sago", "tapioca pearls"],
+      "category": "staples",
+      "retail_price": 80,
+      "unit": "per kg"
+    },
+    {
+      "id": "makhana",
+      "name_en": "Makhana (Fox Nuts)",
+      "name_hi": "मखाना",
+      "aliases": ["makhana", "fox nuts", "phool makhana"],
+      "category": "dry_fruits",
+      "retail_price": 900,
+      "unit": "per kg"
+    },
+    {
+      "id": "almonds",
+      "name_en": "Almonds",
+      "name_hi": "बादाम",
+      "aliases": ["badam", "almonds"],
+      "category": "dry_fruits",
+      "retail_price": 850,
+      "unit": "per kg"
+    },
+    {
+      "id": "cashew",
+      "name_en": "Cashews",
+      "name_hi": "काजू",
+      "aliases": ["kaju", "cashew", "cashews"],
+      "category": "dry_fruits",
+      "retail_price": 950,
+      "unit": "per kg"
+    },
+    {
+      "id": "raisins",
+      "name_en": "Raisins",
+      "name_hi": "किशमिश",
+      "aliases": ["kishmish", "raisins", "kismis"],
+      "category": "dry_fruits",
+      "retail_price": 300,
+      "unit": "per kg"
+    },
+    {
+      "id": "biscuits",
+      "name_en": "Biscuits (Parle-G/Good Day)",
+      "name_hi": "बिस्कुट",
+      "aliases": ["biscuit", "biscuits", "parle g", "parle", "good day", "marie gold"],
+      "category": "snacks",
+      "retail_price": 10,
+      "unit": "per packet"
+    },
+    {
+      "id": "namkeen",
+      "name_en": "Namkeen / Bhujia",
+      "name_hi": "नमकीन / भुजिया",
+      "aliases": ["namkeen", "bhujia", "haldiram", "mixture", "sev"],
+      "category": "snacks",
+      "retail_price": 110,
+      "unit": "per 400g packet"
+    },
+    {
+      "id": "maggi",
+      "name_en": "Maggi Noodles",
+      "name_hi": "मैगी",
+      "aliases": ["maggi", "noodles", "maggie", "yippee"],
+      "category": "snacks",
+      "retail_price": 14,
+      "unit": "per packet"
+    },
+    {
+      "id": "soap",
+      "name_en": "Bathing Soap",
+      "name_hi": "साबुन (नहाने का)",
+      "aliases": ["sabun", "soap", "bathing soap", "nahane ka sabun", "dettol", "lifebuoy", "lux", "pears"],
+      "category": "personal_care",
+      "retail_price": 45,
+      "unit": "per piece"
+    },
+    {
+      "id": "shampoo",
+      "name_en": "Shampoo",
+      "name_hi": "शैम्पू",
+      "aliases": ["shampoo", "clinic plus", "head and shoulders", "sunsilk"],
+      "category": "personal_care",
+      "retail_price": 150,
+      "unit": "per bottle"
+    },
+    {
+      "id": "toothpaste",
+      "name_en": "Toothpaste",
+      "name_hi": "टूथपेस्ट",
+      "aliases": ["toothpaste", "colgate", "pepsodent", "dant kanti", "paste"],
+      "category": "personal_care",
+      "retail_price": 60,
+      "unit": "per 100g"
+    },
+    {
+      "id": "detergent_powder",
+      "name_en": "Detergent Powder",
+      "name_hi": "कपड़े धोने का पाउडर",
+      "aliases": ["detergent", "surf", "washing powder", "kapde dhone ka powder", "surf excel", "tide", "ariel", "ghadi", "nirmah"],
+      "category": "household",
+      "retail_price": 110,
+      "unit": "per kg"
+    },
+    {
+      "id": "dish_wash",
+      "name_en": "Dish Wash Bar/Liquid",
+      "name_hi": "बर्तन धोने का साबुन",
+      "aliases": ["dish wash", "vim", "vim bar", "bartan dhone ka sabun", "bartan sabun"],
+      "category": "household",
+      "retail_price": 25,
+      "unit": "per piece"
+    },
+    {
+      "id": "matchbox",
+      "name_en": "Matchbox",
+      "name_hi": "माचिस",
+      "aliases": ["machis", "matchbox", "match box"],
+      "category": "household",
+      "retail_price": 1,
+      "unit": "per piece"
+    },
+    {
+      "id": "agarbatti",
+      "name_en": "Incense Sticks",
+      "name_hi": "अगरबत्ती",
+      "aliases": ["agarbatti", "incense sticks", "dhoop"],
+      "category": "household",
+      "retail_price": 20,
+      "unit": "per packet"
+    },
+    {
+      "id": "mosquito_repellent",
+      "name_en": "Mosquito Repellent",
+      "name_hi": "मच्छर भगाने की कॉइल/लिक्विड",
+      "aliases": ["all out", "good knight", "coil", "macchar ki dawa", "mosquito repellent"],
+      "category": "household",
+      "retail_price": 85,
+      "unit": "per refill"
+    },
+    {
+      "id": "broom",
+      "name_en": "Broom (Jhadu)",
+      "name_hi": "झाड़ू",
+      "aliases": ["jhadu", "broom", "phool jhadu", "seekh jhadu"],
+      "category": "household",
+      "retail_price": 60,
+      "unit": "per piece"
+    }
+  ]
+}
