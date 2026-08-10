@@ -47,6 +47,28 @@ DEFAULT_GREETING = (
 )
 
 
+class CleanGroqLLM(openai.LLM):
+    def chat(self, *args, **kwargs):
+        stream = super().chat(*args, **kwargs)
+        orig_anext = stream.__anext__
+
+        async def _clean_anext():
+            chunk = await orig_anext()
+            if chunk and chunk.choices:
+                for c in chunk.choices:
+                    if c.delta and c.delta.content:
+                        content = c.delta.content
+                        if "<function=" in content or "{" in content:
+                            content = re.sub(r'<function=.*?>', '', content, flags=re.DOTALL)
+                            content = re.sub(r'\{"(name|user_id|item_name|language_preference|facts)":.*', '', content, flags=re.DOTALL)
+                            content = re.sub(r'<function=.*', '', content, flags=re.DOTALL)
+                            c.delta.content = content
+            return chunk
+
+        stream.__anext__ = _clean_anext
+        return stream
+
+
 class Assistant(Agent):
     def __init__(self, caller_context: str = "") -> None:
         full_prompt = SYSTEM_PROMPT
@@ -151,7 +173,7 @@ async def my_agent(ctx: JobContext):
                 "shukriya", "rupee", "kilo",
             ],
         ),
-        llm=openai.LLM(
+        llm=CleanGroqLLM(
             model="llama-3.3-70b-versatile",
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv("GROQ_API_KEY"),
@@ -163,6 +185,9 @@ async def my_agent(ctx: JobContext):
             text_pacing=True,
         ),
         turn_detection=TurnDetector(),
+        vad=ctx.proc.userdata["vad"],
+        preemptive_generation=True,
+    )
         vad=ctx.proc.userdata["vad"],
         preemptive_generation=True,
     )
