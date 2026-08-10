@@ -188,9 +188,6 @@ async def my_agent(ctx: JobContext):
         vad=ctx.proc.userdata["vad"],
         preemptive_generation=True,
     )
-        vad=ctx.proc.userdata["vad"],
-        preemptive_generation=True,
-    )
 
     # Connect to the room first
     await ctx.connect()
