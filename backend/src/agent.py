@@ -40,7 +40,7 @@ try:
 except ImportError:
     from src.prices import check_price, check_availability
 
-# Default greeting for new callers (Pure Devanagari Hindi for TTS)
+# Default greeting for new callers (Devanagari Hindi for native TTS)
 DEFAULT_GREETING = (
     "नमस्ते! मैं दुकान साथी हूँ, आपकी लोकल दुकान की डिजिटल सहायिका। "
     "बताइए, आज आपको क्या सामान चाहिए या स्टोर के बारे में क्या जानकारी चाहिए?"
@@ -83,13 +83,18 @@ class Assistant(Agent):
             user_id: The unique identifier of the caller.
             name: The caller's name.
             language_preference: Preferred language - hi, en, or hinglish.
-            facts: A JSON string of facts to remember, e.g. {"past_orders": "5 kg aata, 2 kg cheeni", "area": "Sector 4", "preferred_delivery_slot": "morning"}.
+            facts: A JSON string of facts to remember, e.g. {"past_orders": "5 kg aata, 2 kg cheeni", "area": "Sector 4"}.
         """
         logger.info(f"Tool call: saving caller info for {name} ({user_id})")
-        try:
-            facts_dict = json.loads(facts) if isinstance(facts, str) else facts
-        except json.JSONDecodeError:
-            facts_dict = {"notes": facts}
+        if isinstance(facts, dict):
+            facts_dict = facts
+        elif isinstance(facts, str):
+            try:
+                facts_dict = json.loads(facts)
+            except json.JSONDecodeError:
+                facts_dict = {"notes": facts}
+        else:
+            facts_dict = {}
 
         result = await save_caller(
             user_id=user_id,
@@ -128,6 +133,7 @@ server.setup_fnc = prewarm
 
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: JobContext):
+    # Logging setup
     ctx.log_context_fields = {
         "room": ctx.room.name,
     }
@@ -161,15 +167,13 @@ async def my_agent(ctx: JobContext):
         preemptive_generation=True,
     )
 
+    # Connect to the room first
     await ctx.connect()
-
 
     # --- Caller Memory: Auto-lookup & Outbound Detection ---
     is_outbound = ctx.room.name.startswith("outbound")
     outbound_greeting = (
-        "नमस्ते, मैं दुकान साथी से बात कर रही हूँ। मैं आपको याद दिलाने के लिए "
-        "कॉल कर रही हूँ कि आपका पिछला आर्डर खत्म होने वाला है। अगर आप ऐसी कॉल्स नहीं चाहते, "
-        "तो कृपया स्टॉप बोलें।"
+        "नमस्ते, मैं दुकान साथी से बात कर रही हूँ। मैं आपको याद दिलाने के लिए कॉल कर रही हूँ कि आपका पिछला ऑर्डर खत्म होने वाला है। अगर आप ऐसी कॉल्स नहीं चाहते, तो कृपया 'स्टॉप' बोलें।"
     )
     
     caller_context = ""
@@ -216,7 +220,7 @@ async def my_agent(ctx: JobContext):
                 f"Language preference: {caller_data.get('language_pref', 'hi')}\n"
                 f"Known facts: {json.dumps(facts, ensure_ascii=False)}\n"
                 f"Last interaction: {last_seen}\n"
-                f"Greet them warmly in Hindi by name and reference what you know."
+                f"Greet them warmly by name and reference what you know."
             )
 
             # Build a personalised greeting if it's an inbound call
@@ -224,12 +228,11 @@ async def my_agent(ctx: JobContext):
                 facts_summary = ""
                 if facts.get("past_orders"):
                     facts_summary = (
-                        f" पिछली बार आपने {facts['past_orders']} मंगाया था।"
+                        f" पिछली बार आपने {facts['past_orders']} लिया था।"
                     )
-                greeting = f"नमस्ते {name} जी!{facts_summary} आज आपको क्या चाहिए?"
+                greeting = f"नमस्ते {name} जी!{facts_summary} आज आपको क्या सामान चाहिए?"
 
             logger.info("Returning caller: %s, facts: %s", name, facts)
-
         else:
             caller_context = (
                 f"This is a NEW caller. Their user_id is '{caller_id}'.\n"
