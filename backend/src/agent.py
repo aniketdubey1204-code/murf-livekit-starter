@@ -40,17 +40,15 @@ try:
 except ImportError:
     from src.prices import check_price, check_availability
 
-# Default greeting for new callers (Hinglish - safe ASCII)
+# Default greeting for new callers (Pure Devanagari Hindi for TTS)
 DEFAULT_GREETING = (
-    "Namaste! Main Dukaan Sathi hoon, aapki local dukaan ki digital sahayika. "
-    "Bataiye, aaj aapko kya saman chahiye ya store ke baare mein kya jaankari chahiye?"
+    "नमस्ते! मैं दुकान साथी हूँ, आपकी लोकल दुकान की डिजिटल सहायिका। "
+    "बताइए, आज आपको क्या सामान चाहिए या स्टोर के बारे में क्या जानकारी चाहिए?"
 )
 
 
 class Assistant(Agent):
     def __init__(self, caller_context: str = "") -> None:
-        # Inject caller context into the system prompt so the agent knows
-        # whether this is a new or returning caller right from the start.
         full_prompt = SYSTEM_PROMPT
         if caller_context:
             full_prompt += f"\n\nCALLER CONTEXT:\n{caller_context}"
@@ -121,9 +119,6 @@ server = AgentServer()
 
 def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
-    # Initialize the caller database at startup.
-    # Use asyncio.run() because prewarm runs in a background thread
-    # (no current event loop), so get_event_loop() would fail here.
     asyncio.run(init_db())
     logger.info("Caller database initialised during prewarm")
 
@@ -133,12 +128,11 @@ server.setup_fnc = prewarm
 
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: JobContext):
-    # Logging setup
     ctx.log_context_fields = {
         "room": ctx.room.name,
     }
 
-    # Set up a voice AI pipeline
+    # Set up a voice AI pipeline with pure Hindi TTS (hi-IN-anisha)
     session = AgentSession(
         stt=deepgram.STT(
             model="nova-3",
@@ -157,7 +151,7 @@ async def my_agent(ctx: JobContext):
             api_key=os.getenv("GROQ_API_KEY"),
         ),
         tts=murf.TTS(
-            voice="en-IN-anisha",
+            voice="hi-IN-anisha",
             style="Conversation",
             tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
             text_pacing=True,
@@ -167,55 +161,16 @@ async def my_agent(ctx: JobContext):
         preemptive_generation=True,
     )
 
-    @session.on("user_input_transcribed")
-    def on_user_input_transcribed(ev: UserInputTranscribedEvent):
-        transcript = ev.transcript.strip().lower()
-        if not transcript:
-            return
-
-        has_devanagari = any(
-            0x0900 <= ord(c) <= 0x097F for c in transcript
-        )
-
-        hindi_keywords = {
-            "kya", "hai", "aur", "main", "haan", "nahin", "aap",
-            "namaste", "shukriya", "dukaan", "bhaiya", "kirana", "aata",
-            "chawal", "cheeni", "dal", "saman", "order", "rate",
-            "delivery", "udhaar", "batao", "bataiye", "samjhao", "mein",
-            "ke", "ki", "se", "ko", "ka", "jo", "toh", "bhi", "ho",
-            "kar", "raha", "rahi", "rha", "rhi", "mujhe", "mera",
-            "meri", "hum", "tum", "apna", "apni", "karke", "karo",
-            "karna", "tha", "thi", "the", "ab", "kab", "tab", "sab",
-            "kitna",
-        }
-        words = set(transcript.split())
-        has_hindi_words = not words.isdisjoint(hindi_keywords)
-
-        current_voice = getattr(session.tts, "_current_voice", "en-IN-anisha")
-
-        if has_devanagari:
-            if current_voice != "hi-IN-anisha":
-                logger.info(
-                    "Detected Devanagari: '%s'. Switching to hi-IN-anisha",
-                    ev.transcript,
-                )
-                session.tts.update_options(voice="hi-IN-anisha")
-                session.tts._current_voice = "hi-IN-anisha"
-        else:
-            if current_voice != "en-IN-anisha":
-                logger.info(
-                    "Detected English/Hinglish: '%s'. Switching to en-IN-anisha",
-                    ev.transcript,
-                )
-                session.tts.update_options(voice="en-IN-anisha")
-                session.tts._current_voice = "en-IN-anisha"
-
-    # Connect to the room first
     await ctx.connect()
+
 
     # --- Caller Memory: Auto-lookup & Outbound Detection ---
     is_outbound = ctx.room.name.startswith("outbound")
-    outbound_greeting = "Namaste, main Dukaan Sathi se baat kar rahi hoon. Main aapko yaad dilane ke liye call kar rahi hoon ki aapka pichla order khatam hone wala hai. Agar aap aisi calls nahi chahte, toh kripya 'stop' bole."
+    outbound_greeting = (
+        "नमस्ते, मैं दुकान साथी से बात कर रही हूँ। मैं आपको याद दिलाने के लिए "
+        "कॉल कर रही हूँ कि आपका पिछला आर्डर खत्म होने वाला है। अगर आप ऐसी कॉल्स नहीं चाहते, "
+        "तो कृपया स्टॉप बोलें।"
+    )
     
     caller_context = ""
     caller_data = None
@@ -261,7 +216,7 @@ async def my_agent(ctx: JobContext):
                 f"Language preference: {caller_data.get('language_pref', 'hi')}\n"
                 f"Known facts: {json.dumps(facts, ensure_ascii=False)}\n"
                 f"Last interaction: {last_seen}\n"
-                f"Greet them warmly by name and reference what you know."
+                f"Greet them warmly in Hindi by name and reference what you know."
             )
 
             # Build a personalised greeting if it's an inbound call
@@ -269,11 +224,12 @@ async def my_agent(ctx: JobContext):
                 facts_summary = ""
                 if facts.get("past_orders"):
                     facts_summary = (
-                        f" Pichli baar aapne {facts['past_orders']} manga tha."
+                        f" पिछली बार आपने {facts['past_orders']} मंगाया था।"
                     )
-                greeting = f"Namaste {name}!{facts_summary} Aaj kya chahiye?"
+                greeting = f"नमस्ते {name} जी!{facts_summary} आज आपको क्या चाहिए?"
 
             logger.info("Returning caller: %s, facts: %s", name, facts)
+
         else:
             caller_context = (
                 f"This is a NEW caller. Their user_id is '{caller_id}'.\n"
