@@ -36,7 +36,26 @@ async def main():
         participant = await api.sip.create_sip_participant(req)
         print("Outbound call triggered successfully!")
         print(f"SIP Participant ID: {participant.participant_id}")
-        print("The LiveKit Agent should now join the room and greet the caller.")
+        print(f"SIP Call ID: {participant.sip_call_id}")
+        print("Monitoring call status for 15 seconds...")
+
+        from livekit.api import ListParticipantsRequest
+        for i in range(15):
+            await asyncio.sleep(1)
+            try:
+                res = await api.room.list_participants(ListParticipantsRequest(room=room_name))
+                found = False
+                for p in res.participants:
+                    if p.identity == participant_identity:
+                        found = True
+                        print(f"[{i+1}s] Participant status: {p.state} (Name: {p.name}, SIP: {p.attributes})")
+                        break
+                if not found:
+                    print(f"[{i+1}s] Participant left or disconnected.")
+                    break
+            except Exception as ex:
+                print(f"Error checking status: {ex}")
+
     except Exception as e:
         print(f"Failed to initiate outbound call: {e}")
     finally:
