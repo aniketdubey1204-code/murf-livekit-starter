@@ -213,10 +213,16 @@ async def my_agent(ctx: JobContext):
     # Connect to the room first
     await ctx.connect()
 
-    # --- Caller Memory: Auto-lookup ---
+    # --- Caller Memory: Auto-lookup & Outbound Detection ---
+    is_outbound = ctx.room.name.startswith("outbound")
+    outbound_greeting = "Namaste, main Dukaan Sathi se baat kar rahi hoon. Main aapko yaad dilane ke liye call kar rahi hoon ki aapka pichla order khatam hone wala hai. Agar aap aisi calls nahi chahte, toh kripya 'stop' bole."
+    
     caller_context = ""
     caller_data = None
-    greeting = DEFAULT_GREETING
+    greeting = outbound_greeting if is_outbound else DEFAULT_GREETING
+
+    if is_outbound:
+        logger.info("Outbound call detected. Using outbound greeting.")
 
     # Get the remote participant's identity
     participant = None
@@ -258,13 +264,14 @@ async def my_agent(ctx: JobContext):
                 f"Greet them warmly by name and reference what you know."
             )
 
-            # Build a personalised greeting
-            facts_summary = ""
-            if facts.get("past_orders"):
-                facts_summary = (
-                    f" Pichli baar aapne {facts['past_orders']} manga tha."
-                )
-            greeting = f"Namaste {name}!{facts_summary} Aaj kya chahiye?"
+            # Build a personalised greeting if it's an inbound call
+            if not is_outbound:
+                facts_summary = ""
+                if facts.get("past_orders"):
+                    facts_summary = (
+                        f" Pichli baar aapne {facts['past_orders']} manga tha."
+                    )
+                greeting = f"Namaste {name}!{facts_summary} Aaj kya chahiye?"
 
             logger.info("Returning caller: %s, facts: %s", name, facts)
         else:
@@ -275,6 +282,9 @@ async def my_agent(ctx: JobContext):
                 "When you learn useful info, ask for their consent "
                 "before saving it."
             )
+            
+    if is_outbound:
+        caller_context += "\nNOTE: YOU INITIATED THIS CALL. It is an outbound restock reminder. Act proactively as the caller."
 
     # Start the session with caller context injected into the agent
     await session.start(
