@@ -211,15 +211,15 @@ async def my_agent(ctx: JobContext):
         break
 
     if participant is None:
-        # Wait for a participant to connect
+        # Wait for participant to connect (up to 60s for SIP call pickup)
         try:
             participant = await asyncio.wait_for(
                 _wait_for_participant(ctx),
-                timeout=10.0,
+                timeout=60.0,
             )
         except asyncio.TimeoutError:
             logger.warning(
-                "No participant joined within timeout, using default greeting"
+                "No participant joined within 60s timeout, proceeding with session"
             )
 
     if participant:
