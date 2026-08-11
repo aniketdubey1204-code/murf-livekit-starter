@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import sys
+import uuid
 
 # Enforce UTF-8 encoding for stdout/stderr to prevent Windows cp1252 crash when logging Hindi text
 if sys.stdout.encoding.lower() != 'utf-8':
@@ -38,9 +39,9 @@ except ImportError:
     from src.prompt import SYSTEM_PROMPT
 
 try:
-    from db import init_db, lookup_caller, save_caller
+    from db import init_db, lookup_caller, save_caller, create_escalation_record
 except ImportError:
-    from src.db import init_db, lookup_caller, save_caller
+    from src.db import init_db, lookup_caller, save_caller, create_escalation_record
 
 try:
     from prices import check_price, check_availability
@@ -146,6 +147,49 @@ class Assistant(Agent):
         logger.info(f"Tool call: checking availability for '{item_name}'")
         result = await check_availability(item_name)
         return result
+
+    @function_tool
+    async def create_escalation(
+        self,
+        context: RunContext,
+        summary: str,
+        urgency: str,
+        language: str
+    ):
+        """
+        Creates an escalation ticket for a human agent.
+        Use this only AFTER getting explicit permission from the user to escalate.
+        
+        Args:
+            summary: A brief summary of the issue, who the caller is, and what you checked.
+            urgency: One of "low", "medium", "high", or "emergency".
+            language: The caller's preferred language (e.g., "Hindi", "English").
+            
+        Returns:
+            A success message containing the generated reference ID to give to the caller.
+        """
+        logger.info("Tool call: creating escalation")
+        
+        # We need the user_id from the caller_context (which was passed via system prompt or context)
+        # But for simplicity in the tool, we can extract caller_id from the context or just use "unknown" if not found.
+        # Actually, let's just generate a unique ticket ID.
+        ticket_id = f"TKT-{uuid.uuid4().hex[:6].upper()}"
+        
+        # In a real app we'd get user_id from the current session. 
+        # Here we'll just save it with user_id="caller" if not easily accessible, 
+        # or we could require the LLM to pass it if we fed it in the prompt.
+        user_id = "caller" 
+        
+        await create_escalation_record(
+            escalation_id=ticket_id,
+            user_id=user_id,
+            summary=summary,
+            urgency=urgency,
+            language=language
+        )
+        
+        return f"Escalation created successfully. The reference ID is {ticket_id}. Please tell the caller this ID and explain what happens next."
+
 
 
 server = AgentServer()

@@ -18,7 +18,7 @@ logger = logging.getLogger("agent.db")
 _DB_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 _DB_PATH = os.path.join(_DB_DIR, "callers.db")
 
-_CREATE_TABLE = """
+_CREATE_TABLE_CALLERS = """
 CREATE TABLE IF NOT EXISTS callers (
     user_id          TEXT PRIMARY KEY,
     name             TEXT,
@@ -28,12 +28,24 @@ CREATE TABLE IF NOT EXISTS callers (
 );
 """
 
+_CREATE_TABLE_ESCALATIONS = """
+CREATE TABLE IF NOT EXISTS escalations (
+    escalation_id    TEXT PRIMARY KEY,
+    user_id          TEXT,
+    summary          TEXT,
+    urgency          TEXT,
+    language         TEXT,
+    status           TEXT DEFAULT 'open',
+    created_at       TEXT
+);
+"""
 
 async def init_db() -> None:
     """Create the data directory and callers table if they don't exist."""
     os.makedirs(_DB_DIR, exist_ok=True)
     async with aiosqlite.connect(_DB_PATH) as db:
-        await db.execute(_CREATE_TABLE)
+        await db.execute(_CREATE_TABLE_CALLERS)
+        await db.execute(_CREATE_TABLE_ESCALATIONS)
         await db.commit()
     logger.info("Caller database initialised at %s", _DB_PATH)
 
@@ -111,3 +123,30 @@ async def save_caller(
     }
     logger.info("Saved caller profile: %s (%s)", name, user_id)
     return saved
+
+
+async def create_escalation_record(
+    escalation_id: str,
+    user_id: str,
+    summary: str,
+    urgency: str,
+    language: str
+) -> dict:
+    """Insert a new escalation record for human help."""
+    now = datetime.now(timezone.utc).isoformat()
+    
+    async with aiosqlite.connect(_DB_PATH) as db:
+        await db.execute(
+            """
+            INSERT INTO escalations (escalation_id, user_id, summary, urgency, language, status, created_at)
+            VALUES (?, ?, ?, ?, ?, 'open', ?)
+            """,
+            (escalation_id, user_id, summary, urgency, language, now),
+        )
+        await db.commit()
+    
+    logger.info("Created escalation %s for user %s", escalation_id, user_id)
+    return {
+        "escalation_id": escalation_id,
+        "status": "open",
+    }
