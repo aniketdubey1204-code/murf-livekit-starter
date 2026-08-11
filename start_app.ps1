@@ -19,6 +19,7 @@ if (Test-Path "$repoRoot\livekit-server.exe") {
 
 # 2. Backend Agent
 Write-Host "[2/3] Starting Backend Agent..." -ForegroundColor Green
+$env:PYTHONIOENCODING = "utf-8"
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$repoRoot\backend'; uv run python src/agent.py dev"
 
 # 3. Frontend App

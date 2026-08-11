@@ -2,6 +2,13 @@ import asyncio
 import json
 import logging
 import os
+import sys
+
+# Enforce UTF-8 encoding for stdout/stderr to prevent Windows cp1252 crash when logging Hindi text
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stderr.encoding.lower() != 'utf-8':
+    sys.stderr.reconfigure(encoding='utf-8')
 
 from dotenv import load_dotenv
 from livekit import rtc

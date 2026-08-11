@@ -47,6 +47,16 @@ async def main():
         print("Outbound call triggered successfully!")
         print(f"SIP Participant ID: {participant.participant_id}")
         print(f"SIP Call ID: {participant.sip_call_id}")
+        
+        # Explicitly dispatch 'my-agent' to the outbound call room!
+        from livekit.protocol.agent_dispatch import CreateAgentDispatchRequest
+        dispatch_req = CreateAgentDispatchRequest(
+            agent_name="my-agent",
+            room=room_name,
+        )
+        await api.agent_dispatch.create_dispatch(dispatch_req)
+        print("Agent 'my-agent' dispatched to the room!")
+
         print("Monitoring call status for 15 seconds...")
 
         from livekit.api import ListParticipantsRequest
