@@ -10,26 +10,35 @@ from livekit.api.sip_service import CreateSIPParticipantRequest
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env.local"))
 
 async def main():
-    sip_trunk_id = os.getenv("SIP_TRUNK_ID")
+    sip_trunk_id = os.getenv("LIVEKIT_SIP_OUTBOUND_TRUNK_ID") or os.getenv("SIP_TRUNK_ID")
     call_to_number = os.getenv("CALL_TO_NUMBER")
 
+    if len(sys.argv) > 1:
+        call_to_number = sys.argv[1]
+
     if not sip_trunk_id or not call_to_number:
-        print("ERROR: SIP_TRUNK_ID or CALL_TO_NUMBER is missing from .env.local")
-        print("Please configure them and try again.")
+        print("ERROR: SIP_TRUNK_ID (or LIVEKIT_SIP_OUTBOUND_TRUNK_ID) or CALL_TO_NUMBER is missing.")
+        print("Usage: python src/make_outbound_call.py [phone_number_or_linphone_username]")
         sys.exit(1)
+
+    # Format destination for Linphone if username passed
+    if not call_to_number.startswith("+") and not call_to_number.startswith("sip:"):
+        call_to_target = f"sip:{call_to_number}@sip.linphone.org"
+    else:
+        call_to_target = call_to_number
 
     # Generate a unique room name for this outbound call
     room_name = f"outbound-call-{uuid.uuid4().hex[:8]}"
     participant_identity = f"outbound-caller-{uuid.uuid4().hex[:8]}"
     
-    print(f"Initiating outbound call to {call_to_number} via trunk {sip_trunk_id}...")
+    print(f"Initiating outbound call to {call_to_target} via trunk {sip_trunk_id}...")
     print(f"Room name: {room_name}")
 
     api = LiveKitAPI()
     try:
         req = CreateSIPParticipantRequest(
             sip_trunk_id=sip_trunk_id,
-            sip_call_to=call_to_number,
+            sip_call_to=call_to_target,
             room_name=room_name,
             participant_identity=participant_identity,
         )
