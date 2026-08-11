@@ -38,7 +38,8 @@ async def main():
     try:
         req = CreateSIPParticipantRequest(
             sip_trunk_id=sip_trunk_id,
-            sip_call_to=call_to_target,
+            sip_call_to=call_to_number,
+            sip_number=call_to_number,
             room_name=room_name,
             participant_identity=participant_identity,
         )
