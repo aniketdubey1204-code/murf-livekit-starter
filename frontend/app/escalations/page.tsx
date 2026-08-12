@@ -79,9 +79,16 @@ export default function EscalationsPage() {
                   </span>
                 </div>
                 
-                <p className="text-neutral-400 text-sm mb-6 flex-grow leading-relaxed">
+                <p className="text-neutral-400 text-sm mb-4 flex-grow leading-relaxed">
                   {ticket.summary}
                 </p>
+
+                {ticket.follow_up && (
+                  <div className="mb-4 flex items-center text-xs text-neutral-300 bg-neutral-800/60 rounded-lg px-3 py-2">
+                    <span className="text-neutral-500 mr-2">Follow-up:</span>
+                    <span className="font-medium capitalize">{ticket.follow_up}</span>
+                  </div>
+                )}
                 
                 <div className="pt-4 border-t border-neutral-800 flex justify-between items-center text-xs text-neutral-500">
                   <span className="flex items-center">

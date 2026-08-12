@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import sys
 import uuid
 
@@ -78,10 +79,13 @@ class CleanGroqLLM(openai.LLM):
 
 
 class Assistant(Agent):
-    def __init__(self, caller_context: str = "") -> None:
+    def __init__(self, caller_context: str = "", caller_id: str = "unknown") -> None:
         full_prompt = SYSTEM_PROMPT
         if caller_context:
             full_prompt += f"\n\nCALLER CONTEXT:\n{caller_context}"
+        # Store the real caller identity so tools (e.g. escalations) can link
+        # records to the actual caller instead of a hardcoded placeholder.
+        self._caller_id = caller_id or "unknown"
         super().__init__(instructions=full_prompt)
 
     @function_tool
@@ -154,7 +158,8 @@ class Assistant(Agent):
         context: RunContext,
         summary: str,
         urgency: str,
-        language: str
+        language: str,
+        follow_up: str = ""
     ):
         """
         Creates an escalation ticket for a human agent.
@@ -164,28 +169,30 @@ class Assistant(Agent):
             summary: A brief summary of the issue, who the caller is, and what you checked.
             urgency: One of "low", "medium", "high", or "emergency".
             language: The caller's preferred language (e.g., "Hindi", "English").
+            follow_up: The caller's preferred follow-up method, e.g. "phone call",
+                "WhatsApp", "SMS", or "visit store". Ask the caller how they'd like
+                to be contacted back.
             
         Returns:
             A success message containing the generated reference ID to give to the caller.
         """
         logger.info("Tool call: creating escalation")
-        
-        # We need the user_id from the caller_context (which was passed via system prompt or context)
-        # But for simplicity in the tool, we can extract caller_id from the context or just use "unknown" if not found.
-        # Actually, let's just generate a unique ticket ID.
+
+        # Generate a unique ticket ID.
         ticket_id = f"TKT-{uuid.uuid4().hex[:6].upper()}"
-        
-        # In a real app we'd get user_id from the current session. 
-        # Here we'll just save it with user_id="caller" if not easily accessible, 
-        # or we could require the LLM to pass it if we fed it in the prompt.
-        user_id = "caller" 
-        
+
+        # Use the real caller identity captured at session start so the ticket
+        # is linked to the actual caller instead of a hardcoded placeholder.
+        user_id = getattr(self, "_caller_id", "unknown")
+        logger.info("Creating escalation %s for caller %s", ticket_id, user_id)
+
         await create_escalation_record(
             escalation_id=ticket_id,
             user_id=user_id,
             summary=summary,
             urgency=urgency,
-            language=language
+            language=language,
+            follow_up=follow_up,
         )
         
         return f"Escalation created successfully. The reference ID is {ticket_id}. Please tell the caller this ID and explain what happens next."
@@ -250,6 +257,7 @@ async def my_agent(ctx: JobContext):
     
     caller_context = ""
     caller_data = None
+    caller_id = "unknown"
     greeting = outbound_greeting if is_outbound else DEFAULT_GREETING
 
     if is_outbound:
@@ -319,7 +327,7 @@ async def my_agent(ctx: JobContext):
 
     # Start the session with caller context injected into the agent
     await session.start(
-        agent=Assistant(caller_context=caller_context),
+        agent=Assistant(caller_context=caller_context, caller_id=caller_id),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(

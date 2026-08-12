@@ -35,10 +35,20 @@ CREATE TABLE IF NOT EXISTS escalations (
     summary          TEXT,
     urgency          TEXT,
     language         TEXT,
+    follow_up        TEXT,
     status           TEXT DEFAULT 'open',
     created_at       TEXT
 );
 """
+
+async def _migrate_escalations(db: aiosqlite.Connection) -> None:
+    """Add newer columns to an existing escalations table (safe to re-run)."""
+    cursor = await db.execute("PRAGMA table_info(escalations)")
+    columns = {row[1] for row in await cursor.fetchall()}
+    if "follow_up" not in columns:
+        await db.execute("ALTER TABLE escalations ADD COLUMN follow_up TEXT")
+        logger.info("Migrated escalations table: added 'follow_up' column")
+
 
 async def init_db() -> None:
     """Create the data directory and callers table if they don't exist."""
@@ -46,6 +56,7 @@ async def init_db() -> None:
     async with aiosqlite.connect(_DB_PATH) as db:
         await db.execute(_CREATE_TABLE_CALLERS)
         await db.execute(_CREATE_TABLE_ESCALATIONS)
+        await _migrate_escalations(db)
         await db.commit()
     logger.info("Caller database initialised at %s", _DB_PATH)
 
@@ -130,18 +141,24 @@ async def create_escalation_record(
     user_id: str,
     summary: str,
     urgency: str,
-    language: str
+    language: str,
+    follow_up: str = "",
 ) -> dict:
-    """Insert a new escalation record for human help."""
+    """Insert a new escalation record for human help.
+
+    Args:
+        follow_up: The caller's preferred follow-up method (e.g. "phone call",
+            "WhatsApp", "SMS", "visit store").
+    """
     now = datetime.now(timezone.utc).isoformat()
     
     async with aiosqlite.connect(_DB_PATH) as db:
         await db.execute(
             """
-            INSERT INTO escalations (escalation_id, user_id, summary, urgency, language, status, created_at)
-            VALUES (?, ?, ?, ?, ?, 'open', ?)
+            INSERT INTO escalations (escalation_id, user_id, summary, urgency, language, follow_up, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'open', ?)
             """,
-            (escalation_id, user_id, summary, urgency, language, now),
+            (escalation_id, user_id, summary, urgency, language, follow_up, now),
         )
         await db.commit()
     
