@@ -41,6 +41,24 @@ CREATE TABLE IF NOT EXISTS escalations (
 );
 """
 
+# Day 8 – Call analytics. Every completed call is recorded here so the
+# dashboard can show total / successful / failed counts from real data.
+# NOTE: we deliberately DO NOT store transcripts, OTPs, PINs, or any
+# sensitive caller content here — only outcome metadata.
+_CREATE_TABLE_CALLS = """
+CREATE TABLE IF NOT EXISTS calls (
+    call_id          TEXT PRIMARY KEY,
+    user_id          TEXT,
+    channel          TEXT DEFAULT 'browser',
+    outcome          TEXT,
+    failure_reason   TEXT DEFAULT '',
+    success_criteria TEXT DEFAULT '',
+    duration_seconds INTEGER DEFAULT 0,
+    started_at       TEXT,
+    ended_at         TEXT
+);
+"""
+
 async def _migrate_escalations(db: aiosqlite.Connection) -> None:
     """Add newer columns to an existing escalations table (safe to re-run)."""
     cursor = await db.execute("PRAGMA table_info(escalations)")
@@ -56,6 +74,7 @@ async def init_db() -> None:
     async with aiosqlite.connect(_DB_PATH) as db:
         await db.execute(_CREATE_TABLE_CALLERS)
         await db.execute(_CREATE_TABLE_ESCALATIONS)
+        await db.execute(_CREATE_TABLE_CALLS)
         await _migrate_escalations(db)
         await db.commit()
     logger.info("Caller database initialised at %s", _DB_PATH)
@@ -167,3 +186,70 @@ async def create_escalation_record(
         "escalation_id": escalation_id,
         "status": "open",
     }
+
+
+async def record_call(
+    call_id: str,
+    user_id: str,
+    channel: str,
+    outcome: str,
+    started_at: str,
+    ended_at: str,
+    duration_seconds: int = 0,
+    failure_reason: str = "",
+    success_criteria: str = "",
+) -> dict:
+    """Record the outcome of a completed call (Day 8 analytics).
+
+    Args:
+        call_id: Unique identifier for this call.
+        user_id: The caller's identity (stored for internal linking only —
+            never exposed on the public dashboard).
+        channel: "browser" or "sip".
+        outcome: "success" or "failed". A failed call does not mean something
+            broke — it means the call did not reach the defined success
+            condition (caller did not find a product / complete an enquiry).
+        started_at / ended_at: ISO timestamps.
+        duration_seconds: Total call length in seconds.
+        failure_reason: For failed calls, a category such as "no_engagement",
+            "item_not_found", "incomplete", or "tool_error".
+        success_criteria: Human-readable definition of success that was applied.
+    """
+    async with aiosqlite.connect(_DB_PATH) as db:
+        await db.execute(
+            """
+            INSERT INTO calls (
+                call_id, user_id, channel, outcome, failure_reason,
+                success_criteria, duration_seconds, started_at, ended_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(call_id) DO UPDATE SET
+                outcome          = excluded.outcome,
+                failure_reason   = excluded.failure_reason,
+                success_criteria = excluded.success_criteria,
+                duration_seconds = excluded.duration_seconds,
+                ended_at         = excluded.ended_at
+            """,
+            (
+                call_id,
+                user_id,
+                channel,
+                outcome,
+                failure_reason,
+                success_criteria,
+                duration_seconds,
+                started_at,
+                ended_at,
+            ),
+        )
+        await db.commit()
+
+    logger.info(
+        "Recorded call %s: outcome=%s channel=%s duration=%ss reason=%s",
+        call_id,
+        outcome,
+        channel,
+        duration_seconds,
+        failure_reason or "-",
+    )
+    return {"call_id": call_id, "outcome": outcome}

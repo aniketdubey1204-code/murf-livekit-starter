@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import uuid
+from datetime import datetime, timezone
 
 # Enforce UTF-8 encoding for stdout/stderr to prevent Windows cp1252 crash when logging Hindi text
 if sys.stdout.encoding.lower() != 'utf-8':
@@ -79,13 +80,16 @@ class CleanGroqLLM(openai.LLM):
 
 
 class Assistant(Agent):
-    def __init__(self, caller_context: str = "", caller_id: str = "unknown") -> None:
+    def __init__(self, caller_context: str = "", caller_id: str = "unknown", call_state: dict | None = None) -> None:
         full_prompt = SYSTEM_PROMPT
         if caller_context:
             full_prompt += f"\n\nCALLER CONTEXT:\n{caller_context}"
         # Store the real caller identity so tools (e.g. escalations) can link
         # records to the actual caller instead of a hardcoded placeholder.
         self._caller_id = caller_id or "unknown"
+        # Day 8 analytics: shared mutable dict that tool calls update so the
+        # shutdown handler can decide whether the call was a success.
+        self._call_state = call_state if call_state is not None else {}
         super().__init__(instructions=full_prompt)
 
     @function_tool
@@ -136,6 +140,9 @@ class Assistant(Agent):
             language_pref=language_preference,
             facts=facts_dict,
         )
+        # Analytics: caller engaged and consented to save their profile.
+        self._call_state["tool_calls"] = self._call_state.get("tool_calls", 0) + 1
+        self._call_state["saved_info"] = True
         return f"Caller profile saved successfully for {name}."
 
     @function_tool
@@ -143,6 +150,7 @@ class Assistant(Agent):
         """Check the retail price of an item in the store."""
         logger.info(f"Tool call: checking price for '{item_name}'")
         result = await check_price(item_name)
+        self._track_lookup(result)
         return result
 
     @function_tool
@@ -150,7 +158,21 @@ class Assistant(Agent):
         """Check if an item is available in the store."""
         logger.info(f"Tool call: checking availability for '{item_name}'")
         result = await check_availability(item_name)
+        self._track_lookup(result)
         return result
+
+    def _track_lookup(self, result: str) -> None:
+        """Update analytics state after a price / availability lookup.
+
+        The lookup helpers return an apology starting with "माफ़ कीजिये" when
+        the item is NOT found. Anything else means the caller found a product,
+        which counts towards a successful call for our kirana store.
+        """
+        self._call_state["tool_calls"] = self._call_state.get("tool_calls", 0) + 1
+        if result and "माफ़ कीजिये" in result:
+            self._call_state["not_found_count"] = self._call_state.get("not_found_count", 0) + 1
+        else:
+            self._call_state["found_product"] = True
 
     @function_tool
     async def create_escalation(
@@ -194,7 +216,11 @@ class Assistant(Agent):
             language=language,
             follow_up=follow_up,
         )
-        
+
+        # Analytics: the caller's request was successfully routed to a human.
+        self._call_state["tool_calls"] = self._call_state.get("tool_calls", 0) + 1
+        self._call_state["escalation"] = True
+
         return f"Escalation created successfully. The reference ID is {ticket_id}. Please tell the caller this ID and explain what happens next."
 
 
@@ -248,6 +274,29 @@ async def my_agent(ctx: JobContext):
 
     # Connect to the room first
     await ctx.connect()
+
+    # --- Day 8 Call Analytics: outcome tracking ---
+    # Shared mutable state updated by the agent's tool calls. At the end of the
+    # call we inspect it to decide whether the call met our success condition.
+    #
+    # SUCCESS DEFINITION (Local Commerce / Dukaan Sathi kirana store):
+    #   A call is SUCCESSFUL if the caller found a product or completed an
+    #   enquiry — i.e. at least one price/availability lookup found an item,
+    #   OR their request was escalated to the shopkeeper for follow-up.
+    # A "failed" call did not reach that condition (e.g. the caller hung up
+    # early, only asked about items we don't stock, or left mid-enquiry).
+    SUCCESS_CRITERIA = (
+        "Caller found a product/price or their enquiry was escalated to the shopkeeper"
+    )
+    call_state: dict = {
+        "found_product": False,
+        "escalation": False,
+        "saved_info": False,
+        "not_found_count": 0,
+        "tool_calls": 0,
+    }
+    call_id = f"CALL-{uuid.uuid4().hex[:8].upper()}"
+    call_started_at = datetime.now(timezone.utc)
 
     # --- Caller Memory: Auto-lookup & Outbound Detection ---
     is_outbound = ctx.room.name.startswith("outbound")
@@ -325,9 +374,53 @@ async def my_agent(ctx: JobContext):
     if is_outbound:
         caller_context += "\nNOTE: YOU INITIATED THIS CALL. It is an outbound restock reminder. Act proactively as the caller."
 
+    # Determine the channel this call came in on for the analytics dashboard.
+    channel = "browser"
+    if participant is not None and participant.kind == rtc.ParticipantKind.PARTICIPANT_KIND_SIP:
+        channel = "sip"
+    elif is_outbound:
+        # Outbound restock reminders are placed over the phone network (SIP).
+        channel = "sip"
+
+    async def _record_call_outcome():
+        """Persist this call's outcome when the session ends (Day 8)."""
+        ended_at = datetime.now(timezone.utc)
+        duration = max(0, int((ended_at - call_started_at).total_seconds()))
+
+        # Apply the success condition defined above.
+        if call_state.get("found_product") or call_state.get("escalation"):
+            outcome = "success"
+            failure_reason = ""
+        else:
+            outcome = "failed"
+            if call_state.get("tool_calls", 0) == 0:
+                # Caller never got to a real enquiry (e.g. hung up early).
+                failure_reason = "no_engagement"
+            elif call_state.get("not_found_count", 0) > 0:
+                failure_reason = "item_not_found"
+            else:
+                failure_reason = "incomplete"
+
+        try:
+            await record_call(
+                call_id=call_id,
+                user_id=caller_id,
+                channel=channel,
+                outcome=outcome,
+                started_at=call_started_at.isoformat(),
+                ended_at=ended_at.isoformat(),
+                duration_seconds=duration,
+                failure_reason=failure_reason,
+                success_criteria=SUCCESS_CRITERIA,
+            )
+        except Exception as exc:  # never let analytics break shutdown
+            logger.error("Failed to record call outcome for %s: %s", call_id, exc)
+
+    ctx.add_shutdown_callback(_record_call_outcome)
+
     # Start the session with caller context injected into the agent
     await session.start(
-        agent=Assistant(caller_context=caller_context, caller_id=caller_id),
+        agent=Assistant(caller_context=caller_context, caller_id=caller_id, call_state=call_state),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(

@@ -40,7 +40,10 @@ export default function EscalationsPage() {
             </h1>
             <p className="text-neutral-400 mt-2">Manage requests requiring human intervention</p>
           </div>
-          <div className="flex space-x-4 text-sm">
+          <div className="flex items-center space-x-4 text-sm">
+            <Link href="/dashboard" className="text-neutral-400 hover:text-white transition-colors">
+              Analytics →
+            </Link>
             <div className="flex items-center text-orange-400 bg-orange-400/10 px-3 py-1.5 rounded-full">
               <AlertCircle className="w-4 h-4 mr-2" />
               {escalations.filter(e => e.status === 'open').length} Open
