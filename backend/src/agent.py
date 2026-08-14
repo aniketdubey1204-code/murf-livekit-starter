@@ -260,7 +260,7 @@ class ReturnsAgent(Agent):
             instructions=RETURNS_SPECIALIST_PROMPT,
             chat_ctx=chat_ctx,
             tts=murf.TTS(
-                voice="hi-IN-shaan",
+                voice="hi-IN-karan",
                 style="Conversation",
                 tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
                 text_pacing=True,

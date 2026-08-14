@@ -1,40 +1,42 @@
 import asyncio
 import os
+import sys
 from dotenv import load_dotenv
-from livekit.plugins import murf
-from livekit.agents import tokenize
+
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 
 load_dotenv(".env.local")
 load_dotenv("backend/.env.local")
 
-async def test_voice(voice_id: str):
-    print(f"Testing Murf Falcon voice: '{voice_id}'...")
+from livekit.plugins import murf
+from livekit.agents import tokenize, utils
+
+async def test_synth(voice_id: str):
+    print(f"Testing synthesis for voice: '{voice_id}'...")
     try:
-        tts = murf.TTS(
-            voice=voice_id,
-            style="Conversation",
-            tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
-            text_pacing=True,
-        )
-        print(f"✅ Voice '{voice_id}' initialized successfully!")
-        return True
+        async with utils.http_context.open():
+            tts = murf.TTS(
+                voice=voice_id,
+                style="Conversation",
+                tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
+                text_pacing=True,
+            )
+            stream = tts.synthesize("नमस्ते! मैं रिटर्न और रिफंड विशेषज्ञ हूँ।")
+            count = 0
+            async for event in stream:
+                count += 1
+                if count >= 2:
+                    break
+            print(f"[OK] Voice '{voice_id}' generated audio frames successfully!")
+            return True
     except Exception as e:
-        print(f"❌ Voice '{voice_id}' failed: {e}")
+        print(f"[FAIL] Voice '{voice_id}' failed: {e}")
         return False
 
 async def main():
-    candidate_voices = [
-        "hi-IN-shaan",
-        "hi-IN-amit",
-        "hi-IN-ayushi",
-        "hi-IN-anisha",
-    ]
-    working = []
-    for v in candidate_voices:
-        ok = await test_voice(v)
-        if ok:
-            working.append(v)
-    print("\nSupported Murf Falcon Hindi voices:", working)
+    for v in ["hi-IN-karan", "hi-IN-aman"]:
+        await test_synth(v)
 
 if __name__ == "__main__":
     asyncio.run(main())
