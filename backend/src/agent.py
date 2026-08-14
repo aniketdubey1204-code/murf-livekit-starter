@@ -82,7 +82,13 @@ class CleanGroqLLM(openai.LLM):
 
 
 class Assistant(Agent):
-    def __init__(self, caller_context: str = "", caller_id: str = "unknown", call_state: dict | None = None) -> None:
+    def __init__(
+        self,
+        caller_context: str = "",
+        caller_id: str = "unknown",
+        call_state: dict | None = None,
+        chat_ctx: ChatContext | None = None,
+    ) -> None:
         full_prompt = SYSTEM_PROMPT
         if caller_context:
             full_prompt += f"\n\nCALLER CONTEXT:\n{caller_context}"
@@ -92,7 +98,8 @@ class Assistant(Agent):
         # Day 8 analytics: shared mutable dict that tool calls update so the
         # shutdown handler can decide whether the call was a success.
         self._call_state = call_state if call_state is not None else {}
-        super().__init__(instructions=full_prompt)
+        super().__init__(instructions=full_prompt, chat_ctx=chat_ctx)
+
 
     @function_tool
     async def lookup_caller_tool(self, context: RunContext, user_id: str):
@@ -294,9 +301,13 @@ class ReturnsAgent(Agent):
     async def transfer_back_to_main_agent(self, context: RunContext) -> tuple[Agent, str]:
         """Transfer the user back to the main store assistant (Dukaan Saathi) when return inquiries are complete or when the customer wants to check prices, store hours, or buy items."""
         logger.info("Specialist transferring customer back to main agent")
-        main_agent = Assistant(caller_id=self._caller_id, call_state=self._call_state)
-        main_agent.chat_ctx = self.chat_ctx.copy(exclude_instructions=True)
+        main_agent = Assistant(
+            caller_id=self._caller_id,
+            call_state=self._call_state,
+            chat_ctx=self.chat_ctx.copy(exclude_instructions=True),
+        )
         return main_agent, "मैं आपको वापस हमारी मुख्य दुकान साथी सहायिका से कनेक्ट कर रही हूँ।"
+
 
 
 server = AgentServer()
