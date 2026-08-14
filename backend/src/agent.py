@@ -19,6 +19,7 @@ from livekit.agents import (
     Agent,
     AgentServer,
     AgentSession,
+    ChatContext,
     JobContext,
     JobProcess,
     RunContext,
@@ -36,9 +37,10 @@ logger = logging.getLogger("agent")
 load_dotenv(".env.local")
 
 try:
-    from prompt import SYSTEM_PROMPT
+    from prompt import SYSTEM_PROMPT, RETURNS_SPECIALIST_PROMPT
 except ImportError:
-    from src.prompt import SYSTEM_PROMPT
+    from src.prompt import SYSTEM_PROMPT, RETURNS_SPECIALIST_PROMPT
+
 
 try:
     from db import init_db, lookup_caller, save_caller, create_escalation_record
@@ -223,9 +225,82 @@ class Assistant(Agent):
 
         return f"Escalation created successfully. The reference ID is {ticket_id}. Please tell the caller this ID and explain what happens next."
 
+    @function_tool
+    async def transfer_to_returns_specialist(self, context: RunContext) -> tuple[Agent, str]:
+        """Transfer the user to the Returns & Refunds Specialist when they ask about returning an item, getting a refund, exchanging damaged goods, or checking return policy."""
+        logger.info("Main agent transferring customer to Returns Specialist")
+        self._call_state["tool_calls"] = self._call_state.get("tool_calls", 0) + 1
+        returns_agent = ReturnsAgent(
+            chat_ctx=self.chat_ctx.copy(exclude_instructions=True),
+            caller_id=getattr(self, "_caller_id", "unknown"),
+            call_state=getattr(self, "_call_state", {}),
+        )
+        return returns_agent, "मैं आपको हमारे रिटर्न और रिफंड विशेषज्ञ से कनेक्ट कर रही हूँ। कृपया एक पल प्रतीक्षा करें।"
+
+
+class ReturnsAgent(Agent):
+    """Specialist Agent (Day 9) for Returns, Refunds, and Order Exchanges."""
+
+    def __init__(
+        self,
+        chat_ctx: ChatContext | None = None,
+        caller_id: str = "unknown",
+        call_state: dict | None = None,
+    ) -> None:
+        self._caller_id = caller_id
+        self._call_state = call_state if call_state is not None else {}
+        super().__init__(
+            instructions=RETURNS_SPECIALIST_PROMPT,
+            chat_ctx=chat_ctx,
+            tts=murf.TTS(
+                voice="hi-IN-kabir",
+                style="Conversation",
+                tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
+                text_pacing=True,
+            ),
+        )
+
+    async def on_enter(self) -> None:
+        await self.session.generate_reply(
+            instructions="Introduce yourself as the Returns and Refunds Specialist (रिटर्न और रिफंड विशेषज्ञ) for Dukaan Saathi and offer to help with their return, refund, or item exchange query."
+        )
+
+    @function_tool
+    async def process_return_request(
+        self,
+        context: RunContext,
+        item_name: str,
+        reason: str,
+        condition: str = "packaged",
+    ):
+        """Process a product return or refund request for the customer.
+
+        Args:
+            item_name: Name of the product being returned.
+            reason: Reason for return (e.g. damaged, expired, wrong product).
+            condition: Product condition (e.g. sealed, opened, damaged).
+        """
+        logger.info(f"Specialist Tool call: return request for '{item_name}' ({reason})")
+        return_id = f"RET-{uuid.uuid4().hex[:6].upper()}"
+        self._call_state["tool_calls"] = self._call_state.get("tool_calls", 0) + 1
+        self._call_state["found_product"] = True
+        return (
+            f"Return request registered successfully with ID {return_id}. "
+            f"Inform the customer that their return request for {item_name} has been approved under our 7-day policy. "
+            f"They can drop the item at the store or hand it to our delivery rider with Return ID {return_id}."
+        )
+
+    @function_tool
+    async def transfer_back_to_main_agent(self, context: RunContext) -> tuple[Agent, str]:
+        """Transfer the user back to the main store assistant (Dukaan Saathi) when return inquiries are complete or when the customer wants to check prices, store hours, or buy items."""
+        logger.info("Specialist transferring customer back to main agent")
+        main_agent = Assistant(caller_id=self._caller_id, call_state=self._call_state)
+        main_agent.chat_ctx = self.chat_ctx.copy(exclude_instructions=True)
+        return main_agent, "मैं आपको वापस हमारी मुख्य दुकान साथी सहायिका से कनेक्ट कर रही हूँ।"
 
 
 server = AgentServer()
+
 
 
 def prewarm(proc: JobProcess):
